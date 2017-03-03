@@ -4,6 +4,7 @@ class ControlPanel {
   Boolean show;
   int cp_width;
   ControlP5 cp5;
+  int old_width;
 
   //constructor
   ControlPanel (PApplet thePApplet) {
@@ -13,15 +14,17 @@ class ControlPanel {
     this.cp5 = new ControlP5(thePApplet);
 
     this.addControlP5Elements();
+    old_width = width;
   }
 
   void render() {
     if (this.show) {
+      if (old_width != width) resetPositionControls();
       fill(60);
       stroke(60);
       rect(width - this.cp_width, 0, this.cp_width, height);
 
-      RadioButton tmp = cp5.get(RadioButton.class, "rbtn_seeking");
+      RadioButton tmp = this.cp5.get(RadioButton.class, "rbtn_seeking");
 
       if (seeking) tmp.activate(0);
       else if (avoiding) tmp.activate(1);
@@ -62,39 +65,39 @@ class ControlPanel {
       .addItem("Attract", 0)
       .addItem("Repel", 1)
       .addItem("Neutral", 2);
-      
-      
-      this.cp5.addToggle("toggle_c")
+
+
+    this.cp5.addToggle("toggle_c")
       .setPosition(width - this.cp_width + 20, 100)
       .setSize(40, 20)
       .setValue(cohesion)
       .setLabel("Cohesion");
-      //reset first toggle
-      cohesion = !cohesion;
-      
-      this.cp5.addToggle("toggle_s")
+    //reset first toggle
+    cohesion = !cohesion;
+
+    this.cp5.addToggle("toggle_s")
       .setPosition(width - this.cp_width + 100, 100)
       .setSize(40, 20)
       .setValue(separation)
       .setLabel("Separation");
-      //reset first toggle
-      separation = !separation;
-      
-      
-      this.cp5.addToggle("toggle_a")
+    //reset first toggle
+    separation = !separation;
+
+
+    this.cp5.addToggle("toggle_a")
       .setPosition(width - this.cp_width + 180, 100)
       .setSize(40, 20)
       .setValue(alignment)
       .setLabel("Alignment");
-      //reset first toggle
-      alignment = !alignment;
-      
-      
-      
-      
-      
-      
-      
+    //reset first toggle
+    alignment = !alignment;
+
+
+
+
+
+
+
     //.activate(2);
     //;
 
@@ -110,6 +113,76 @@ class ControlPanel {
      .addItem("Neutral", 100)
      ;
      */
+  }
+
+
+
+
+  void resetPositionControls() {
+    //String[] controllers = { "btn_clear", "rbtn_seeking"};
+
+    //println(controllers.length);
+    //for (int i = 0; i < controllers.length; i++) {
+    //  println("i= " + i);
+    //  Controller c = cp5.getController(controllers[i]);
+    //  println(c.getPosition());
+    //}
+
+
+
+    this.cp5.getController("btn_clear")
+      .setPosition(width - this.cp_width + 20, 20);
+
+
+    this.cp5.getController("toggle_c")
+      .setPosition(width - this.cp_width + 20, 100);
+
+    this.cp5.getController("toggle_s")
+      .setPosition(width - this.cp_width + 100, 100);
+
+    this.cp5.getController("toggle_a")
+      .setPosition(width - this.cp_width + 180, 100);
+
+    RadioButton tmp = this.cp5.get(RadioButton.class, "rbtn_seeking");
+    tmp.setPosition(width - this.cp_width + 20, 60);
+
+
+
+    //.setSize(40, 20)
+    //.setColorForeground(color(120))
+    //.setColorActive(color(255))
+    //.setColorLabel(color(255))
+    //.setItemsPerRow(3)
+    //.setSpacingColumn(40)
+    //.addItem("Attract", 0)
+    //.addItem("Repel", 1)
+    //.addItem("Neutral", 2);
+
+
+    //this.cp5.addToggle("toggle_c")
+    //.setPosition(width - this.cp_width + 20, 100)
+    //.setSize(40, 20)
+    //.setValue(cohesion)
+    //.setLabel("Cohesion");
+    ////reset first toggle
+    //cohesion = !cohesion;
+
+    //this.cp5.addToggle("toggle_s")
+    //.setPosition(width - this.cp_width + 100, 100)
+    //.setSize(40, 20)
+    //.setValue(separation)
+    //.setLabel("Separation");
+    ////reset first toggle
+    //separation = !separation;
+
+
+    //this.cp5.addToggle("toggle_a")
+    //.setPosition(width - this.cp_width + 180, 100)
+    //.setSize(40, 20)
+    //.setValue(alignment)
+    //.setLabel("Alignment");
+    ////reset first toggle
+    //alignment = !alignment;
   }
 }
 
@@ -145,6 +218,9 @@ void toggle_s() {
 void toggle_a() {
   alignment = !alignment;
 }
+
+
+
 
 /*
 public void checkBox(){

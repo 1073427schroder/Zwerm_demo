@@ -31,7 +31,7 @@ void setup() {
   //h = floor(displayHeight * 0.9);
   //surface.setSize(w,h);
   
-  //surface.setResizable(true);
+  surface.setResizable(true);
   //fullScreen();
   //println("Displaywidth " + displayWidth);
   //println("Displayheight " + displayHeight);
@@ -42,10 +42,10 @@ void setup() {
   //size(1728, 972);
   
   
-  //size(displayWidth, displayHeight);
+  size(displayWidth, displayHeight);
+  //size(800, 600);
   //size(1280, 800);
-  size(1728, 972);
-  //pixelDensity(displayDensity());
+  pixelDensity(displayDensity());
   
   
   
@@ -70,6 +70,8 @@ void setup() {
    boids.add(new Boid(width / 2, height / 2));
    }
    */
+   
+  surface.setSize(800,600);
 }
 
 void draw() {
@@ -98,11 +100,11 @@ void draw() {
   cpanel.render();
   
   //println(Cohesion);
-  println("-----");
-  println(cohesion);
-  println(separation);
-  println(alignment);
-  println("-----");
+  //println("-----");
+  //println(cohesion);
+  //println(separation);
+  //println(alignment);
+  //println("-----");
 }
 
 void mouseDragged() {
