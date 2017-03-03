@@ -81,34 +81,36 @@ class Boid {
   }
 
   PVector separate(ArrayList<Boid> boids) {
-    float desiredseparation = 20.0f;
-    PVector sum = new PVector(0,0,0);
-    int count = 0;
+    if (separation) {
+      float desiredseparation = 20.0f;
+      PVector sum = new PVector(0, 0, 0);
+      int count = 0;
 
-    for (Boid other : boids) {
-      float d = PVector.dist(location, other.location);
+      for (Boid other : boids) {
+        float d = PVector.dist(location, other.location);
 
-      if ((d >0) && (d < desiredseparation)) {
-        PVector diff = PVector.sub(location, other.location);
-        diff.normalize();
-        diff.div(d);
-        sum.add(diff);
-        count++;
+        if ((d >0) && (d < desiredseparation)) {
+          PVector diff = PVector.sub(location, other.location);
+          diff.normalize();
+          diff.div(d);
+          sum.add(diff);
+          count++;
+        }
       }
-    }
 
-    if (count > 0) {
-      sum.div(count);
-    }
-    
-    if (sum.mag() > 0) {
-      sum.setMag(maxspeed);
-      PVector steer = PVector.sub(sum, velocity);
-      steer.limit(maxforce);
-      //applyForce(steer);
-      return steer;
-    }
-    return(new PVector(0, 0));
+      if (count > 0) {
+        sum.div(count);
+      }
+
+      if (sum.mag() > 0) {
+        sum.setMag(maxspeed);
+        PVector steer = PVector.sub(sum, velocity);
+        steer.limit(maxforce);
+        //applyForce(steer);
+        return steer;
+      }
+      return(new PVector(0, 0));
+    } else     return(new PVector(0, 0));
   }
 
   PVector seek(PVector target) {
@@ -124,36 +126,34 @@ class Boid {
 
   PVector cursor_seeking() {
     if (seeking) {
-    PVector target = new PVector(mouseX, mouseY);
-    PVector desired = PVector.sub(target, location);
-    desired.normalize();
-    desired.mult(maxspeed);
-    PVector steer = PVector.sub(desired, velocity);
-    steer.limit(maxforce);
-    //applyForce(steer);
-    return steer;
-    }
-    else {
-      return new PVector(0,0);
+      PVector target = new PVector(mouseX, mouseY);
+      PVector desired = PVector.sub(target, location);
+      desired.normalize();
+      desired.mult(maxspeed);
+      PVector steer = PVector.sub(desired, velocity);
+      steer.limit(maxforce);
+      //applyForce(steer);
+      return steer;
+    } else {
+      return new PVector(0, 0);
     }
   }
 
-  
+
   //avoiding
-    PVector cursor_avoiding() {
+  PVector cursor_avoiding() {
     if (avoiding) {
-    PVector target = new PVector(mouseX, mouseY);
-    PVector desired = PVector.sub(target, location);
-    desired.normalize();
-    desired.mult(maxspeed);
-    desired.mult(-1);
-    PVector steer = PVector.sub(desired, velocity);
-    steer.limit(maxforce);
-    //applyForce(steer);
-    return steer;
-    }
-    else {
-      return new PVector(0,0);
+      PVector target = new PVector(mouseX, mouseY);
+      PVector desired = PVector.sub(target, location);
+      desired.normalize();
+      desired.mult(maxspeed);
+      desired.mult(-1);
+      PVector steer = PVector.sub(desired, velocity);
+      steer.limit(maxforce);
+      //applyForce(steer);
+      return steer;
+    } else {
+      return new PVector(0, 0);
     }
   }
 
@@ -204,29 +204,32 @@ class Boid {
   }
 
   PVector align (ArrayList<Boid> boids) {
-    float neighbordist = 50;
-    PVector sum = new PVector(0, 0);
-    int count = 0;
-    for (Boid other : boids) {
-      float d = PVector.dist(location, other.location);
-      if ((d > 0) && (d < neighbordist)) {
-        sum.add(other.velocity);
-        count++;
+    if (alignment) {
+      float neighbordist = 50;
+      PVector sum = new PVector(0, 0);
+      int count = 0;
+      for (Boid other : boids) {
+        float d = PVector.dist(location, other.location);
+        if ((d > 0) && (d < neighbordist)) {
+          sum.add(other.velocity);
+          count++;
+        }
       }
-    }
-    if (count > 0) {
-      sum.div(count);
-      sum.normalize();
-      sum.mult(maxspeed);
-      PVector steer = PVector.sub(sum, velocity);
-      steer.limit(maxforce);
-      return steer;
-    } else {
-      return new PVector (0, 0);
-    }
+      if (count > 0) {
+        sum.div(count);
+        sum.normalize();
+        sum.mult(maxspeed);
+        PVector steer = PVector.sub(sum, velocity);
+        steer.limit(maxforce);
+        return steer;
+      } else {
+        return new PVector (0, 0);
+      }
+    } else return new PVector(0, 0);
   }
 
   PVector cohesion (ArrayList<Boid> boids) {
+    if (cohesion){
     float neighbordist = 50;
     PVector sum = new PVector(0, 0);
     int count = 0;
@@ -243,6 +246,8 @@ class Boid {
     } else {
       return new PVector(0, 0);
     }
+    }
+    else return new PVector(0,0);
   }
 
   /*

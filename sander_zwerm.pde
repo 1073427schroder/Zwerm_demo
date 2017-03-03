@@ -9,6 +9,9 @@ ArrayList<Boid> boids;
  Boolean separating;
  */
 
+Boolean separation;
+Boolean cohesion;
+Boolean alignment;
 
 
 Boolean seeking;
@@ -19,6 +22,9 @@ Flock flock;
 
 
 void setup() {
+  alignment = true;
+  cohesion = true;
+  separation = true;
   //int w;
   //int h;
   //w = floor(displayWidth * 0.9);
@@ -27,8 +33,8 @@ void setup() {
   
   //surface.setResizable(true);
   //fullScreen();
-  println("Displaywidth " + displayWidth);
-  println("Displayheight " + displayHeight);
+  //println("Displaywidth " + displayWidth);
+  //println("Displayheight " + displayHeight);
   
   //println("Displaywidth " + floor(displayWidth * 0.9));
   //println("Displayheight " + floor(displayHeight *0.9));
@@ -90,6 +96,13 @@ void draw() {
    }
    */
   cpanel.render();
+  
+  //println(Cohesion);
+  println("-----");
+  println(cohesion);
+  println(separation);
+  println(alignment);
+  println("-----");
 }
 
 void mouseDragged() {

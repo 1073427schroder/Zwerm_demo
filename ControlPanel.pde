@@ -62,6 +62,39 @@ class ControlPanel {
       .addItem("Attract", 0)
       .addItem("Repel", 1)
       .addItem("Neutral", 2);
+      
+      
+      this.cp5.addToggle("toggle_c")
+      .setPosition(width - this.cp_width + 20, 100)
+      .setSize(40, 20)
+      .setValue(cohesion)
+      .setLabel("Cohesion");
+      //reset first toggle
+      cohesion = !cohesion;
+      
+      this.cp5.addToggle("toggle_s")
+      .setPosition(width - this.cp_width + 100, 100)
+      .setSize(40, 20)
+      .setValue(separation)
+      .setLabel("Separation");
+      //reset first toggle
+      separation = !separation;
+      
+      
+      this.cp5.addToggle("toggle_a")
+      .setPosition(width - this.cp_width + 180, 100)
+      .setSize(40, 20)
+      .setValue(alignment)
+      .setLabel("Alignment");
+      //reset first toggle
+      alignment = !alignment;
+      
+      
+      
+      
+      
+      
+      
     //.activate(2);
     //;
 
@@ -101,6 +134,16 @@ public void rbtn_seeking(int mode) {
   default:
     break;
   }
+}
+
+void toggle_c() {
+  cohesion = !cohesion;
+}
+void toggle_s() {
+  separation = !separation;
+}
+void toggle_a() {
+  alignment = !alignment;
 }
 
 /*
