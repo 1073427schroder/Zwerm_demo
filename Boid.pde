@@ -82,14 +82,13 @@ class Boid {
 
   PVector separate(ArrayList<Boid> boids) {
     if (separation) {
-      float desiredseparation = 20.0f;
       PVector sum = new PVector(0, 0, 0);
       int count = 0;
 
       for (Boid other : boids) {
         float d = PVector.dist(location, other.location);
 
-        if ((d >0) && (d < desiredseparation)) {
+        if ((d >0) && (d < desired_s)) {
           PVector diff = PVector.sub(location, other.location);
           diff.normalize();
           diff.div(d);

@@ -17,6 +17,8 @@ int c_power;
 int s_power;
 int a_power;
 
+float desired_s;
+
 Boolean seeking;
 Boolean avoiding;
 ControlPanel cpanel;
@@ -33,6 +35,8 @@ void setup() {
   c_power = 100;
   s_power = 100;
   a_power = 100;
+  
+  desired_s = 20.0f;
   
   //int w;
   //int h;
