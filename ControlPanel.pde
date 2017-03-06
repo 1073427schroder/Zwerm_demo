@@ -132,6 +132,12 @@ class ControlPanel {
       .setSize(100, 20)
       .setLabel("Separation distance")
       ;
+    this.cp5.addSlider("neighbor_d")
+      .setPosition(width - this.cp_width + 20, 300)
+      .setRange(0, 250)
+      .setSize(100, 20)
+      .setLabel("Neighbor distance")
+      ;
 
 
 
@@ -196,6 +202,10 @@ class ControlPanel {
 
     this.cp5.getController("desired_s")
       .setPosition(width - this.cp_width + 20, 260);
+      
+      
+    this.cp5.getController("neighbor_d")
+      .setPosition(width - this.cp_width + 20, 300);
 
 
 
