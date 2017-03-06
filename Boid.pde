@@ -67,9 +67,9 @@ class Boid {
     PVector see = cursor_seeking();
     PVector avo = cursor_avoiding();
 
-    sep.mult(1.5);
-    ali.mult(1.0);
-    coh.mult(1.0);
+    sep.mult(s_power*0.015);
+    ali.mult(a_power*0.01);
+    coh.mult(c_power*0.01);
     see.mult(1.0);
     avo.mult(1.0);
 

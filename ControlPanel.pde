@@ -91,16 +91,24 @@ class ControlPanel {
       .setLabel("Alignment");
     //reset first toggle
     alignment = !alignment;
-    
+
     this.cp5.addSlider("c_power")
-    .setPosition(width - this.cp_width + 20, 140)
-    .setRange(0,200)
-    .setSize(100, 20)
-    ;
+      .setPosition(width - this.cp_width + 20, 140)
+      .setRange(0, 200)
+      .setSize(100, 20)
+      ;
 
+    this.cp5.addSlider("s_power")
+      .setPosition(width - this.cp_width + 20, 180)
+      .setRange(0, 200)
+      .setSize(100, 20)
+      ;
 
-
-
+    this.cp5.addSlider("a_power")
+      .setPosition(width - this.cp_width + 20, 220)
+      .setRange(0, 200)
+      .setSize(100, 20)
+      ;
 
 
 
@@ -151,9 +159,15 @@ class ControlPanel {
 
     RadioButton tmp = this.cp5.get(RadioButton.class, "rbtn_seeking");
     tmp.setPosition(width - this.cp_width + 20, 60);
-    
+
     this.cp5.getController("c_power")
-    .setPosition(width - this.cp_width + 20, 140);
+      .setPosition(width - this.cp_width + 20, 140);
+
+    this.cp5.getController("s_power")
+      .setPosition(width - this.cp_width + 20, 180);
+
+    this.cp5.getController("a_power")
+      .setPosition(width - this.cp_width + 20, 220);
 
 
 
