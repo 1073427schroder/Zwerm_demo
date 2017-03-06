@@ -117,7 +117,7 @@ void draw() {
 }
 
 void mouseDragged() {
-  if (mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height) {
+  if (mouseButton == RIGHT && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height) {
     flock.addBoid(new Boid(mouseX, mouseY));
   }
 }
