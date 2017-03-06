@@ -122,6 +122,12 @@ void mouseDragged() {
   }
 }
 
+void mousePressed() {
+  if (mouseButton == LEFT && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height) {
+    flock.addBoid(new Boid(mouseX, mouseY));
+  }
+}
+
 /*
 void mousePressed() {
  if (mouseButton == LEFT) {
