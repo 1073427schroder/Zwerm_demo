@@ -18,6 +18,7 @@ int s_power;
 int a_power;
 
 float desired_s;
+float neighbor_d;
 
 Boolean seeking;
 Boolean avoiding;
@@ -37,6 +38,7 @@ void setup() {
   a_power = 100;
   
   desired_s = 20.0f;
+  neighbor_d = 50.0f;
   
   //int w;
   //int h;

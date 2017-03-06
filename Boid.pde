@@ -204,12 +204,11 @@ class Boid {
 
   PVector align (ArrayList<Boid> boids) {
     if (alignment) {
-      float neighbordist = 50;
       PVector sum = new PVector(0, 0);
       int count = 0;
       for (Boid other : boids) {
         float d = PVector.dist(location, other.location);
-        if ((d > 0) && (d < neighbordist)) {
+        if ((d > 0) && (d < neighbor_d)) {
           sum.add(other.velocity);
           count++;
         }
@@ -229,12 +228,11 @@ class Boid {
 
   PVector cohesion (ArrayList<Boid> boids) {
     if (cohesion){
-    float neighbordist = 50;
     PVector sum = new PVector(0, 0);
     int count = 0;
     for (Boid other : boids) {
       float d = PVector.dist(location, other.location);
-      if ((d>0) && (d<neighbordist)) {
+      if ((d>0) && (d<neighbor_d)) {
         sum.add(other.location);
         count++;
       }
