@@ -29,6 +29,14 @@ class ControlPanel {
       if (seeking) tmp.activate(0);
       else if (avoiding) tmp.activate(1);
       else tmp.activate(2);
+
+
+
+      fill(255);
+      stroke(0);
+      text("Drag the mouse to generate new boids.", width - this.cp_width + 10, height-30);
+      text("Number of boids: " + flock.boids.size(), width - this.cp_width + 10, height - 20);
+      text("Framerate: " + round(frameRate), width - this.cp_width + 10, height - 10);
     }
   }
 
@@ -109,7 +117,7 @@ class ControlPanel {
       .setRange(0, 200)
       .setSize(100, 20)
       .setLabel("Separation power");
-      ;
+    ;
 
     this.cp5.addSlider("a_power")
       .setPosition(width - this.cp_width + 20, 220)
@@ -117,14 +125,14 @@ class ControlPanel {
       .setSize(100, 20)
       .setLabel("Alignment power")
       ;
-      
-      this.cp5.addSlider("desired_s")
+
+    this.cp5.addSlider("desired_s")
       .setPosition(width - this.cp_width + 20, 260)
       .setRange(0, 80)
       .setSize(100, 20)
       .setLabel("Separation distance")
       ;
-      
+
 
 
 
@@ -184,9 +192,9 @@ class ControlPanel {
 
     this.cp5.getController("a_power")
       .setPosition(width - this.cp_width + 20, 220);
-      
-      
-      this.cp5.getController("desired_s")
+
+
+    this.cp5.getController("desired_s")
       .setPosition(width - this.cp_width + 20, 260);
 
 

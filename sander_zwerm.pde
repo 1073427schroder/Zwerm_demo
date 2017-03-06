@@ -100,11 +100,11 @@ void draw() {
    boid.display();
    }
    */
-  fill(255);
-  stroke(0);
-  text("Drag the mouse to generate new boids.", 10, height-30);
-  text("Number of boids: " + flock.boids.size(), 10, height - 20);
-  text("Framerate: " + round(frameRate), 10, height - 10);
+  //fill(255);
+  //stroke(0);
+  //text("Drag the mouse to generate new boids.", 10, height-30);
+  //text("Number of boids: " + flock.boids.size(), 10, height - 20);
+  //text("Framerate: " + round(frameRate), 10, height - 10);
   /* 
    if (cpanel.updated) {
    cpanel.render();
