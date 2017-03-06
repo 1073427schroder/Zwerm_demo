@@ -13,6 +13,9 @@ Boolean separation;
 Boolean cohesion;
 Boolean alignment;
 
+int c_power;
+int s_power;
+int a_power;
 
 Boolean seeking;
 Boolean avoiding;
@@ -25,6 +28,12 @@ void setup() {
   alignment = true;
   cohesion = true;
   separation = true;
+  
+  
+  c_power = 100;
+  s_power = 100;
+  a_power = 100;
+  
   //int w;
   //int h;
   //w = floor(displayWidth * 0.9);
