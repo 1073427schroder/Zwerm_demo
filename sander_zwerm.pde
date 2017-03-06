@@ -13,6 +13,7 @@ Boolean separation;
 Boolean cohesion;
 Boolean alignment;
 
+int c_power;
 
 Boolean seeking;
 Boolean avoiding;
@@ -25,6 +26,9 @@ void setup() {
   alignment = true;
   cohesion = true;
   separation = true;
+  
+  
+  c_power = 120;
   //int w;
   //int h;
   //w = floor(displayWidth * 0.9);
@@ -105,6 +109,7 @@ void draw() {
   //println(separation);
   //println(alignment);
   //println("-----");
+  println(c_power);
 }
 
 void mouseDragged() {
