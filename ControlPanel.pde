@@ -29,6 +29,14 @@ class ControlPanel {
       if (seeking) tmp.activate(0);
       else if (avoiding) tmp.activate(1);
       else tmp.activate(2);
+
+
+
+      fill(255);
+      stroke(0);
+      text("Drag the mouse to generate new boids.", width - this.cp_width + 10, height-30);
+      text("Number of boids: " + flock.boids.size(), width - this.cp_width + 10, height - 20);
+      text("Framerate: " + round(frameRate), width - this.cp_width + 10, height - 10);
     }
   }
 
@@ -52,7 +60,8 @@ class ControlPanel {
 
     this.cp5.addButton("btn_clear")
       .setPosition(width - this.cp_width + 20, 20)
-      .setLabel("Clear");
+      .setLabel("Clear")
+      ;
 
     this.cp5.addRadioButton("rbtn_seeking")
       .setPosition(width - this.cp_width + 20, 60)
@@ -64,14 +73,16 @@ class ControlPanel {
       .setSpacingColumn(40)
       .addItem("Attract", 0)
       .addItem("Repel", 1)
-      .addItem("Neutral", 2);
+      .addItem("Neutral", 2)
+      ;
 
 
     this.cp5.addToggle("toggle_c")
       .setPosition(width - this.cp_width + 20, 100)
       .setSize(40, 20)
       .setValue(cohesion)
-      .setLabel("Cohesion");
+      .setLabel("Cohesion")
+      ;
     //reset first toggle
     cohesion = !cohesion;
 
@@ -79,7 +90,8 @@ class ControlPanel {
       .setPosition(width - this.cp_width + 100, 100)
       .setSize(40, 20)
       .setValue(separation)
-      .setLabel("Separation");
+      .setLabel("Separation")
+      ;
     //reset first toggle
     separation = !separation;
 
@@ -88,7 +100,8 @@ class ControlPanel {
       .setPosition(width - this.cp_width + 180, 100)
       .setSize(40, 20)
       .setValue(alignment)
-      .setLabel("Alignment");
+      .setLabel("Alignment")
+      ;
     //reset first toggle
     alignment = !alignment;
 
@@ -96,19 +109,36 @@ class ControlPanel {
       .setPosition(width - this.cp_width + 20, 140)
       .setRange(0, 200)
       .setSize(100, 20)
+      .setLabel("Cohesion power")
       ;
 
     this.cp5.addSlider("s_power")
       .setPosition(width - this.cp_width + 20, 180)
       .setRange(0, 200)
       .setSize(100, 20)
-      ;
+      .setLabel("Separation power");
+    ;
 
     this.cp5.addSlider("a_power")
       .setPosition(width - this.cp_width + 20, 220)
       .setRange(0, 200)
       .setSize(100, 20)
+      .setLabel("Alignment power")
       ;
+
+    this.cp5.addSlider("desired_s")
+      .setPosition(width - this.cp_width + 20, 260)
+      .setRange(0, 80)
+      .setSize(100, 20)
+      .setLabel("Separation distance")
+      ;
+    this.cp5.addSlider("neighbor_d")
+      .setPosition(width - this.cp_width + 20, 300)
+      .setRange(0, 250)
+      .setSize(100, 20)
+      .setLabel("Neighbor distance")
+      ;
+
 
 
 
@@ -168,6 +198,14 @@ class ControlPanel {
 
     this.cp5.getController("a_power")
       .setPosition(width - this.cp_width + 20, 220);
+
+
+    this.cp5.getController("desired_s")
+      .setPosition(width - this.cp_width + 20, 260);
+      
+      
+    this.cp5.getController("neighbor_d")
+      .setPosition(width - this.cp_width + 20, 300);
 
 
 

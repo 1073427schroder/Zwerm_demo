@@ -17,6 +17,9 @@ int c_power;
 int s_power;
 int a_power;
 
+float desired_s;
+float neighbor_d;
+
 Boolean seeking;
 Boolean avoiding;
 ControlPanel cpanel;
@@ -33,6 +36,9 @@ void setup() {
   c_power = 100;
   s_power = 100;
   a_power = 100;
+  
+  desired_s = 20.0f;
+  neighbor_d = 50.0f;
   
   //int w;
   //int h;
@@ -94,11 +100,11 @@ void draw() {
    boid.display();
    }
    */
-  fill(255);
-  stroke(0);
-  text("Drag the mouse to generate new boids.", 10, height-30);
-  text("Number of boids: " + flock.boids.size(), 10, height - 20);
-  text("Framerate: " + round(frameRate), 10, height - 10);
+  //fill(255);
+  //stroke(0);
+  //text("Drag the mouse to generate new boids.", 10, height-30);
+  //text("Number of boids: " + flock.boids.size(), 10, height - 20);
+  //text("Framerate: " + round(frameRate), 10, height - 10);
   /* 
    if (cpanel.updated) {
    cpanel.render();
