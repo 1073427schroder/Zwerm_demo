@@ -9,6 +9,10 @@ ArrayList<Boid> boids;
  Boolean separating;
  */
 
+Obstacles obstacles;
+Boolean creating_obstacles = false;
+Boolean eraser_mode = false;
+
 Boolean separation;
 Boolean cohesion;
 Boolean alignment;
@@ -28,42 +32,43 @@ Flock flock;
 
 
 void setup() {
+  obstacles = new Obstacles();
   alignment = true;
   cohesion = true;
   separation = true;
-  
-  
+
+
   c_power = 100;
   s_power = 100;
   a_power = 100;
-  
+
   desired_s = 20.0f;
   neighbor_d = 50.0f;
-  
+
   //int w;
   //int h;
   //w = floor(displayWidth * 0.9);
   //h = floor(displayHeight * 0.9);
   //surface.setSize(w,h);
-  
+
   surface.setResizable(true);
   //fullScreen();
   //println("Displaywidth " + displayWidth);
   //println("Displayheight " + displayHeight);
-  
+
   //println("Displaywidth " + floor(displayWidth * 0.9));
   //println("Displayheight " + floor(displayHeight *0.9));
   //surface.setSize(floor(displayWidth * 0.9), floor(displayHeight *0.9));
   //size(1728, 972);
-  
-  
+
+
   size(displayWidth, displayHeight);
   //size(800, 600);
   //size(1280, 800);
   pixelDensity(displayDensity());
-  
-  
-  
+
+
+
   frameRate(60);
   flock = new Flock();
   seeking = false;
@@ -85,14 +90,31 @@ void setup() {
    boids.add(new Boid(width / 2, height / 2));
    }
    */
-   
-  surface.setSize(800,600);
+
+  surface.setSize(800, 600);
 }
 
 void draw() {
   background(70);
 
   flock.run();
+  obstacles.render();
+
+  if (!eraser_mode) {
+    stroke(175);
+    strokeWeight(20);
+    point(mouseX, mouseY);
+  } else {
+    stroke(255);
+    strokeWeight(20);
+    point(mouseX, mouseY);
+  }
+  if (creating_obstacles) {
+    stroke(175);
+    strokeWeight(20);
+    line(obstacles.start_p.x, obstacles.start_p.y, mouseX, mouseY);
+  }
+
   /*
   for (Boid boid : boids) {
    boid.applyBehaviors();
@@ -113,7 +135,7 @@ void draw() {
    }
    */
   cpanel.render();
-  
+
   //println(Cohesion);
   //println("-----");
   //println(cohesion);
@@ -129,7 +151,16 @@ void mouseDragged() {
 }
 
 void mousePressed() {
-  if (mouseButton == LEFT && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height) {
+  if (!eraser_mode && !creating_obstacles) {
+    obstacles.startObstacle(mouseX, mouseY);
+  } else  if (!eraser_mode) {
+    obstacles.endObstacle(mouseX, mouseY);
+  }
+  if (eraser_mode) {
+    obstacles.eraseObstacle(mouseX, mouseY);
+  }
+
+  if (eraser_mode && mouseButton == LEFT && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height) {
     flock.addBoid(new Boid(mouseX, mouseY));
   }
 }
@@ -174,6 +205,13 @@ void keyPressed() {
     break;
   case 'h':
     cpanel.toggleShow();
+    break;
+  case 'k':
+    obstacles.empty();
+    break;
+  case 'e':
+    creating_obstacles = false;
+    eraser_mode = !eraser_mode;
     break;
   default:
     break;

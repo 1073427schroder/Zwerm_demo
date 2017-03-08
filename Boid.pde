@@ -271,6 +271,8 @@ class Boid {
   }
 
   void render() {
+    noStroke();
+    strokeWeight(1);
     float theta = velocity.heading() + PI/2;
     fill(255);
     stroke(255);
