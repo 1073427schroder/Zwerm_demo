@@ -149,7 +149,7 @@ void draw() {
 }
 
 void mouseDragged() {
-  if (keyPressed == true && keyCode == SHIFT && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height) {
+  if (mouseButton == RIGHT && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height) {
     flock.addBoid(new Boid(mouseX, mouseY));
   }
 }
@@ -164,7 +164,7 @@ void mousePressed() {
     obstacles.eraseObstacle(mouseX, mouseY);
   }
 
-  if (mode == Mode.BOIDS && mouseButton == LEFT && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height) {
+  if (mode == Mode.BOIDS && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height) {
     flock.addBoid(new Boid(mouseX, mouseY));
   }
 }
@@ -215,15 +215,18 @@ void keyPressed() {
     break;
   case 'e':
     creating_obstacles = false;
-    if (mode != Mode.ERASE_OBS) mode = Mode.ERASE_OBS;
+    rbtn_mode(2);
+    //if (mode != Mode.ERASE_OBS) mode = Mode.ERASE_OBS;
     //eraser_mode = !eraser_mode;
     break;
   case 'o':
-    if (mode != Mode.ADD_OBS) mode = Mode.ADD_OBS;
+    rbtn_mode(1);
+    //if (mode != Mode.ADD_OBS) mode = Mode.ADD_OBS;
     //eraser_mode = !eraser_mode;
     break;
   case 'b':
-    mode = Mode.BOIDS;
+    rbtn_mode(0);
+    //  mode = Mode.BOIDS;
     break;
   default:
     break;
