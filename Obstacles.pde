@@ -37,9 +37,10 @@ class Obstacles {
   void eraseObstacle(int x, int y) {
     for (int i = obstacles.size() - 1; i >= 0; i--) {
       Obstacle o = obstacles.get(i);
-      if (o.intersectsPoint(x,y)) {
+      if (o.intersectsPoint(x, y)) {
         obstacles.remove(i);
       }
     }
   }
+
 }

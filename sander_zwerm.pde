@@ -155,9 +155,9 @@ void mouseDragged() {
 }
 
 void mousePressed() {
-  if (mode == Mode.ADD_OBS && !creating_obstacles) {
+  if (mode == Mode.ADD_OBS && !creating_obstacles&& mouseButton == LEFT && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height) {
     obstacles.startObstacle(mouseX, mouseY);
-  } else  if (mode == Mode.ADD_OBS) {
+  } else  if (mode == Mode.ADD_OBS && mouseButton == LEFT && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height) {
     obstacles.endObstacle(mouseX, mouseY);
   }
   if (mode == Mode.ERASE_OBS) {

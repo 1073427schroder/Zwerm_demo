@@ -20,6 +20,7 @@ class ControlPanel {
   void render() {
     if (this.show) {
       if (old_width != width) resetPositionControls();
+      strokeWeight(1);
       fill(60);
       stroke(60);
       rect(width - this.cp_width, 0, this.cp_width, height);
@@ -202,8 +203,8 @@ class ControlPanel {
 
     this.cp5.getController("desired_s")
       .setPosition(width - this.cp_width + 20, 260);
-      
-      
+
+
     this.cp5.getController("neighbor_d")
       .setPosition(width - this.cp_width + 20, 300);
 
