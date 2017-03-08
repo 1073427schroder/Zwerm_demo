@@ -1,7 +1,11 @@
 //Test code zwerm
 //Code based of Daniel Shiffman's Nature of Code Chapter 6
 
- 
+enum Mode {
+  BOIDS, ADD_OBS, ERASE_OBS
+}
+Mode mode = Mode.BOIDS;
+
 /*
 ArrayList<Boid> boids;
  PVector target;
@@ -100,11 +104,11 @@ void draw() {
   flock.run();
   obstacles.render();
 
-  if (!eraser_mode) {
+  if (mode == Mode.ADD_OBS) {
     stroke(175);
     strokeWeight(20);
     point(mouseX, mouseY);
-  } else {
+  } else if (mode == Mode.ERASE_OBS) {
     stroke(255);
     strokeWeight(20);
     point(mouseX, mouseY);
@@ -151,16 +155,16 @@ void mouseDragged() {
 }
 
 void mousePressed() {
-  if (!eraser_mode && !creating_obstacles) {
+  if (mode == Mode.ADD_OBS && !creating_obstacles) {
     obstacles.startObstacle(mouseX, mouseY);
-  } else  if (!eraser_mode) {
+  } else  if (mode == Mode.ADD_OBS) {
     obstacles.endObstacle(mouseX, mouseY);
   }
-  if (eraser_mode) {
+  if (mode == Mode.ERASE_OBS) {
     obstacles.eraseObstacle(mouseX, mouseY);
   }
 
-  if (eraser_mode && mouseButton == LEFT && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height) {
+  if (mode == Mode.BOIDS && mouseButton == LEFT && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height) {
     flock.addBoid(new Boid(mouseX, mouseY));
   }
 }
@@ -211,7 +215,15 @@ void keyPressed() {
     break;
   case 'e':
     creating_obstacles = false;
-    eraser_mode = !eraser_mode;
+    if (mode != Mode.ERASE_OBS) mode = Mode.ERASE_OBS;
+    //eraser_mode = !eraser_mode;
+    break;
+  case 'o':
+    if (mode != Mode.ADD_OBS) mode = Mode.ADD_OBS;
+    //eraser_mode = !eraser_mode;
+    break;
+  case 'b':
+    mode = Mode.BOIDS;
     break;
   default:
     break;
