@@ -208,13 +208,13 @@ class ControlPanel {
 
 
     this.cp5.getController("toggle_c")
-      .setPosition(width - this.cp_width + 20, 100);
+      .setPosition(width - this.cp_width + 20, 95);
 
     this.cp5.getController("toggle_s")
-      .setPosition(width - this.cp_width + 100, 100);
+      .setPosition(width - this.cp_width + 100, 95);
 
     this.cp5.getController("toggle_a")
-      .setPosition(width - this.cp_width + 180, 100);
+      .setPosition(width - this.cp_width + 180, 95);
 
     RadioButton tmp = this.cp5.get(RadioButton.class, "rbtn_seeking");
     tmp.setPosition(width - this.cp_width + 20, 60);
