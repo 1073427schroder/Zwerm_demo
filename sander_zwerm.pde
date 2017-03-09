@@ -6,6 +6,7 @@ enum Mode {
 }
 Mode mode = Mode.BOIDS;
 
+float UIScl = 1.0f;
 /*
 ArrayList<Boid> boids;
  PVector target;
@@ -81,7 +82,7 @@ void setup() {
     Boid b = new Boid(width/2, height/2);
     flock.addBoid(b);
   }
-  cpanel = new ControlPanel(this);
+  cpanel = new ControlPanel(this, UIScl);
   /*
   //boids = new ArrayList<Boid>();
    target = new PVector(width / 2, height / 2);

@@ -5,15 +5,21 @@ class ControlPanel {
   int cp_width;
   ControlP5 cp5;
   int old_width;
+  float scl;
 
   //constructor
-  ControlPanel (PApplet thePApplet) {
+  ControlPanel (PApplet thePApplet, float scl) {
     this.show = true;
-    this.setWidth();
+    this.setWidth();    
+    this.scl = scl;
 
     this.cp5 = new ControlP5(thePApplet);
 
+    this.cp5.setFont(createFont("Verdana", 12 * this.scl));
+    
     this.addControlP5Elements();
+
+
     old_width = width;
   }
 
@@ -30,14 +36,14 @@ class ControlPanel {
       if (seeking) tmp.activate(0);
       else if (avoiding) tmp.activate(1);
       else tmp.activate(2);
-      
-      
+
+
       tmp = this.cp5.get(RadioButton.class, "rbtn_mode");
-      
+
       if (mode == Mode.BOIDS) tmp.activate(0);
       else if (mode == Mode.ADD_OBS) tmp.activate(1);
       else if (mode == Mode.ERASE_OBS) tmp.activate(2);
-      
+
 
 
 
@@ -50,7 +56,7 @@ class ControlPanel {
   }
 
   void setWidth() {
-    this.cp_width = 280;
+    this.cp_width = 300;
   }
 
   void toggleShow() {
@@ -74,12 +80,12 @@ class ControlPanel {
 
     this.cp5.addRadioButton("rbtn_seeking")
       .setPosition(width - this.cp_width + 20, 60)
-      .setSize(40, 20)
+      .setSize(20, 20)
       .setColorForeground(color(120))
       .setColorActive(color(255))
       .setColorLabel(color(255))
       .setItemsPerRow(3)
-      .setSpacingColumn(40)
+      .setSpacingColumn(60)
       .addItem("Attract", 0)
       .addItem("Repel", 1)
       .addItem("Neutral", 2)
@@ -155,7 +161,7 @@ class ControlPanel {
       .setColorActive(color(255))
       .setColorLabel(color(255))
       .setItemsPerRow(5)
-      .setSpacingColumn(60)
+      .setSpacingColumn(80)
       .addItem("Boids", 0)
       .addItem("Obstacles", 1)
       .addItem("Eraser", 2)
@@ -304,7 +310,7 @@ public void rbtn_mode(int state) {
     mode = Mode.ADD_OBS;
     break;
   case 2:
-  mode = Mode.ERASE_OBS;
+    mode = Mode.ERASE_OBS;
     break;
   default:
     break;
