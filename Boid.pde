@@ -2,12 +2,14 @@ class Boid {
   PVector location;
   PVector velocity;
   PVector acceleration;
+  PVector obstacle_vector;
   float r;
   float maxspeed;
   float maxforce;
   float d;
 
   Boid(float x, float y) {
+    obstacle_vector = new PVector(0, 0);
     acceleration = new PVector(0, 0);
     velocity = new PVector(random(-2, 2), random(-2, 2));
     //velocity.setMag(random(3,4));
@@ -66,18 +68,21 @@ class Boid {
     PVector coh = cohesion(boids);
     PVector see = cursor_seeking();
     PVector avo = cursor_avoiding();
+    PVector obs = avoidObstacle();
 
     sep.mult(s_power*0.015);
     ali.mult(a_power*0.01);
     coh.mult(c_power*0.01);
     see.mult(1.0);
     avo.mult(1.0);
+    obs.mult(2.0);
 
     applyForce(sep);
     applyForce(ali);
     applyForce(coh);
     applyForce(see);
     applyForce(avo);
+    applyForce(obs);
   }
 
   PVector separate(ArrayList<Boid> boids) {
@@ -195,7 +200,7 @@ class Boid {
       desired.normalize();
       desired.mult(maxspeed);
       PVector steer = PVector.sub(desired, velocity);
-      steer.limit(maxforce);
+      steer.limit(maxforce * 1.5);
       //applyForce(steer);
       return(steer);
     }
@@ -227,25 +232,54 @@ class Boid {
   }
 
   PVector cohesion (ArrayList<Boid> boids) {
-    if (cohesion){
+    if (cohesion) {
+      PVector sum = new PVector(0, 0);
+      int count = 0;
+      for (Boid other : boids) {
+        float d = PVector.dist(location, other.location);
+        if ((d>0) && (d<neighbor_d)) {
+          sum.add(other.location);
+          count++;
+        }
+      }
+      if (count > 0) {
+        sum.div(count);
+        return seek(sum);
+      } else {
+        return new PVector(0, 0);
+      }
+    } else return new PVector(0, 0);
+  }
+
+  PVector avoidObstacle() {
     PVector sum = new PVector(0, 0);
     int count = 0;
-    for (Boid other : boids) {
-      float d = PVector.dist(location, other.location);
-      if ((d>0) && (d<neighbor_d)) {
-        sum.add(other.location);
-        count++;
+    //obstacles.checkDistance
+    for (Obstacle o : obstacles.obstacles) {
+      obstacle_vector.set(0, 0);
+      float dist = o.calcDistPointToLine(o.start_position, o.end_position, location, obstacle_vector);
+      dist = sqrt(dist);
+      if (dist < 40) {
+        PVector diff = PVector.sub(location, obstacle_vector);
+        diff.normalize();
+        diff.div(d*d);        // Weight by distance
+        sum.add(diff);
+        count++;            // Keep track of how many
       }
     }
+
     if (count > 0) {
       sum.div(count);
-      return seek(sum);
-    } else {
-      return new PVector(0, 0);
     }
-    }
-    else return new PVector(0,0);
+    if (sum.mag() > 0) {
+      sum.setMag(maxspeed);
+      PVector steer = PVector.sub(sum, velocity);
+      steer.limit(maxforce * 1.5);
+      //applyForce(steer);
+      return steer;
+    } else     return(new PVector(0, 0));
   }
+
 
   /*
   void wrap() {
@@ -271,6 +305,8 @@ class Boid {
   }
 
   void render() {
+    noStroke();
+    strokeWeight(1);
     float theta = velocity.heading() + PI/2;
     fill(255);
     stroke(255);

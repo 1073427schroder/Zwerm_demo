@@ -20,6 +20,7 @@ class ControlPanel {
   void render() {
     if (this.show) {
       if (old_width != width) resetPositionControls();
+      strokeWeight(1);
       fill(60);
       stroke(60);
       rect(width - this.cp_width, 0, this.cp_width, height);
@@ -29,6 +30,14 @@ class ControlPanel {
       if (seeking) tmp.activate(0);
       else if (avoiding) tmp.activate(1);
       else tmp.activate(2);
+      
+      
+      tmp = this.cp5.get(RadioButton.class, "rbtn_mode");
+      
+      if (mode == Mode.BOIDS) tmp.activate(0);
+      else if (mode == Mode.ADD_OBS) tmp.activate(1);
+      else if (mode == Mode.ERASE_OBS) tmp.activate(2);
+      
 
 
 
@@ -139,6 +148,20 @@ class ControlPanel {
       .setLabel("Neighbor distance")
       ;
 
+    this.cp5.addRadioButton("rbtn_mode")
+      .setPosition(width - this.cp_width + 20, 340)
+      .setSize(20, 20)
+      .setColorForeground(color(120))
+      .setColorActive(color(255))
+      .setColorLabel(color(255))
+      .setItemsPerRow(5)
+      .setSpacingColumn(60)
+      .addItem("Boids", 0)
+      .addItem("Obstacles", 1)
+      .addItem("Eraser", 2)
+      ;
+
+
 
 
 
@@ -189,6 +212,8 @@ class ControlPanel {
 
     RadioButton tmp = this.cp5.get(RadioButton.class, "rbtn_seeking");
     tmp.setPosition(width - this.cp_width + 20, 60);
+    tmp = this.cp5.get(RadioButton.class, "rbtn_mode");
+    tmp.setPosition(width - this.cp_width + 20, 340);
 
     this.cp5.getController("c_power")
       .setPosition(width - this.cp_width + 20, 140);
@@ -202,8 +227,8 @@ class ControlPanel {
 
     this.cp5.getController("desired_s")
       .setPosition(width - this.cp_width + 20, 260);
-      
-      
+
+
     this.cp5.getController("neighbor_d")
       .setPosition(width - this.cp_width + 20, 300);
 
@@ -264,6 +289,22 @@ public void rbtn_seeking(int mode) {
     avoiding = true;
     break;
   case 2:
+    break;
+  default:
+    break;
+  }
+}
+
+public void rbtn_mode(int state) {
+  switch (state) {
+  case 0: 
+    mode = Mode.BOIDS;
+    break;
+  case 1:
+    mode = Mode.ADD_OBS;
+    break;
+  case 2:
+  mode = Mode.ERASE_OBS;
     break;
   default:
     break;

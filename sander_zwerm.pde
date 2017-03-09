@@ -1,6 +1,10 @@
 //Test code zwerm
 //Code based of Daniel Shiffman's Nature of Code Chapter 6
 
+enum Mode {
+  BOIDS, ADD_OBS, ERASE_OBS
+}
+Mode mode = Mode.BOIDS;
 
 /*
 ArrayList<Boid> boids;
@@ -8,6 +12,10 @@ ArrayList<Boid> boids;
  Boolean avoiding;
  Boolean separating;
  */
+
+Obstacles obstacles;
+Boolean creating_obstacles = false;
+Boolean eraser_mode = false;
 
 Boolean separation;
 Boolean cohesion;
@@ -28,42 +36,43 @@ Flock flock;
 
 
 void setup() {
+  obstacles = new Obstacles();
   alignment = true;
   cohesion = true;
   separation = true;
-  
-  
+
+
   c_power = 100;
   s_power = 100;
   a_power = 100;
-  
+
   desired_s = 20.0f;
   neighbor_d = 50.0f;
-  
+
   //int w;
   //int h;
   //w = floor(displayWidth * 0.9);
   //h = floor(displayHeight * 0.9);
   //surface.setSize(w,h);
-  
+
   surface.setResizable(true);
   //fullScreen();
   //println("Displaywidth " + displayWidth);
   //println("Displayheight " + displayHeight);
-  
+
   //println("Displaywidth " + floor(displayWidth * 0.9));
   //println("Displayheight " + floor(displayHeight *0.9));
   //surface.setSize(floor(displayWidth * 0.9), floor(displayHeight *0.9));
   //size(1728, 972);
-  
-  
+
+
   size(displayWidth, displayHeight);
   //size(800, 600);
   //size(1280, 800);
   pixelDensity(displayDensity());
-  
-  
-  
+
+
+
   frameRate(60);
   flock = new Flock();
   seeking = false;
@@ -85,14 +94,31 @@ void setup() {
    boids.add(new Boid(width / 2, height / 2));
    }
    */
-   
-  surface.setSize(800,600);
+
+  surface.setSize(800, 600);
 }
 
 void draw() {
   background(70);
 
   flock.run();
+  obstacles.render();
+
+  if (mode == Mode.ADD_OBS) {
+    stroke(175);
+    strokeWeight(20);
+    point(mouseX, mouseY);
+  } else if (mode == Mode.ERASE_OBS) {
+    stroke(255);
+    strokeWeight(20);
+    point(mouseX, mouseY);
+  }
+  if (creating_obstacles) {
+    stroke(175);
+    strokeWeight(20);
+    line(obstacles.start_p.x, obstacles.start_p.y, mouseX, mouseY);
+  }
+
   /*
   for (Boid boid : boids) {
    boid.applyBehaviors();
@@ -113,7 +139,7 @@ void draw() {
    }
    */
   cpanel.render();
-  
+
   //println(Cohesion);
   //println("-----");
   //println(cohesion);
@@ -123,13 +149,22 @@ void draw() {
 }
 
 void mouseDragged() {
-  if (keyPressed == true && keyCode == SHIFT && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height) {
+  if (mouseButton == RIGHT && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height) {
     flock.addBoid(new Boid(mouseX, mouseY));
   }
 }
 
 void mousePressed() {
-  if (mouseButton == LEFT && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height) {
+  if (mode == Mode.ADD_OBS && !creating_obstacles&& mouseButton == LEFT && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height) {
+    obstacles.startObstacle(mouseX, mouseY);
+  } else  if (mode == Mode.ADD_OBS && mouseButton == LEFT && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height) {
+    obstacles.endObstacle(mouseX, mouseY);
+  }
+  if (mode == Mode.ERASE_OBS) {
+    obstacles.eraseObstacle(mouseX, mouseY);
+  }
+
+  if (mode == Mode.BOIDS && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height) {
     flock.addBoid(new Boid(mouseX, mouseY));
   }
 }
@@ -174,6 +209,24 @@ void keyPressed() {
     break;
   case 'h':
     cpanel.toggleShow();
+    break;
+  case 'k':
+    obstacles.empty();
+    break;
+  case 'e':
+    creating_obstacles = false;
+    rbtn_mode(2);
+    //if (mode != Mode.ERASE_OBS) mode = Mode.ERASE_OBS;
+    //eraser_mode = !eraser_mode;
+    break;
+  case 'o':
+    rbtn_mode(1);
+    //if (mode != Mode.ADD_OBS) mode = Mode.ADD_OBS;
+    //eraser_mode = !eraser_mode;
+    break;
+  case 'b':
+    rbtn_mode(0);
+    //  mode = Mode.BOIDS;
     break;
   default:
     break;
