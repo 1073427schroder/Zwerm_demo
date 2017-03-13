@@ -176,13 +176,16 @@ class ControlPanel {
 
     cp5.addColorWheel("c", width - this.cp_width + 20, 20, 200 )
       .moveTo("color")
+      .setLabel("Boids Color")
       ;
     //cp5.addColorWheel("c", width - this.cp_width + 20, 380, this.cp_width - 40 ).setRGB(color(255, 255, 255));
     cp5.addColorWheel("background_c", width - this.cp_width + 20, 20 + this.cp_width - 20, 200  )
       .moveTo("color")
+      .setLabel("Background Color");
       ;
     cp5.addColorWheel("obs_c", width - this.cp_width + 20, 20 + this.cp_width*2 - 20, 200 )
       .moveTo("color")
+      .setLabel("Obstacle Color")
       ;
 
 
