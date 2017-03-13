@@ -192,7 +192,7 @@ class ControlPanel {
       
       cp5.addSlider("boid_scl")
       .setPosition(width - this.cp_width + 20, 20)
-      .setRange(0.5, 5)
+      .setRange(0.5, 10)
       .setSize(100, 20)
       .setLabel("Boid Scale")
       .moveTo("scaling")
@@ -200,7 +200,7 @@ class ControlPanel {
 
       cp5.addSlider("obs_scl")
       .setPosition(width - this.cp_width + 20, 60)
-      .setRange(0.5, 5)
+      .setRange(0.5, 10)
       .setSize(100, 20)
       .setLabel("Obstactle Scale")
       .moveTo("scaling")

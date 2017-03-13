@@ -8,11 +8,12 @@ enum Mode {
 Mode mode = Mode.BOIDS;
 
 float obs_scl = 1.0f;
-float boid_scl = 1.0f;
+float boid_scl = 3.0f;
 float UIScl = 1.0f;
-int background_c = 70;
-int obs_c = 175;
-int boid_c = 255;
+int background_c = 255; //70
+int obs_c = #D12A2A; //175
+int boid_c = #532AD1; //255
+int eraser_c = 255; //255
 
 /*
 ArrayList<Boid> boids;
@@ -117,7 +118,7 @@ void draw() {
     strokeWeight(20*obs_scl);
     point(mouseX, mouseY);
   } else if (mode == Mode.ERASE_OBS) {
-    stroke(255);
+    stroke(eraser_c);
     strokeWeight(20*obs_scl);
     point(mouseX, mouseY);
   }
