@@ -8,7 +8,7 @@ class Obstacle {
   }
 
   void drawObstacle() {
-    stroke(175);
+    stroke(obs_c);
     strokeWeight(20);
     line(start_position.x, start_position.y, end_position.x, end_position.y);
     //println("sx: " + start_position.x +" sy: "+start_position.y +" ex: "+end_position.x +" ey: "+ end_position.y);
