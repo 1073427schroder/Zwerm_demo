@@ -14,11 +14,13 @@ class ControlPanel {
     this.scl = scl;
 
     this.cp5 = new ControlP5(thePApplet);
+    ControlWindow tmp = this.cp5.getWindow();
+    tmp.setPositionOfTabs(width - this.cp_width,0);
 
     this.cp5.setFont(createFont("Verdana", 12 * this.scl));
-    
-    this.addControlP5Elements();
 
+    this.addControlP5Elements();
+    
 
     old_width = width;
   }
@@ -167,6 +169,21 @@ class ControlPanel {
       .addItem("Eraser", 2)
       ;
 
+    this.cp5.addTab("color")
+      //.setPosition(width - this.cp_width, 0)
+      ;
+
+
+    cp5.addColorWheel("c", width - this.cp_width + 20, 20, 200 )
+      .moveTo("color")
+      ;
+    //cp5.addColorWheel("c", width - this.cp_width + 20, 380, this.cp_width - 40 ).setRGB(color(255, 255, 255));
+    cp5.addColorWheel("background_c", width - this.cp_width + 20, 20 + this.cp_width - 20, 200  )
+      .moveTo("color")
+      ;
+    cp5.addColorWheel("obs_c", width - this.cp_width + 20, 20 + this.cp_width*2 - 20, 200 )
+      .moveTo("color")
+      ;
 
 
 
@@ -237,6 +254,33 @@ class ControlPanel {
 
     this.cp5.getController("neighbor_d")
       .setPosition(width - this.cp_width + 20, 300);
+
+
+
+    this.cp5.getController("c")
+      .setPosition(width - this.cp_width + 20, 20)
+      ;
+    this.cp5.getController("background_c")
+      .setPosition(width - this.cp_width + 20, 20 + this.cp_width - 40);
+    ;
+    this.cp5.getController("obs_c")
+      .setPosition(width - this.cp_width + 20, 20 + this.cp_width*2 - 40*2);
+    ;
+
+
+    ControlWindow wind = this.cp5.getWindow();
+    wind.setPositionOfTabs(width - this.cp_width,0);
+
+    //Tab test = this.cp5.get(Tab.class, "color");
+    //println(test.isMoveable());
+    
+    //this.cp5.getTab("color")
+    ////.setPosition(50,50)
+    //.setMoveable(true)
+    //;
+    
+
+
 
 
 
@@ -329,7 +373,10 @@ void toggle_a() {
   alignment = !alignment;
 }
 
-
+void c(int c) {
+  flock.changeColor(c);
+  boid_c = c;
+}
 
 
 /*

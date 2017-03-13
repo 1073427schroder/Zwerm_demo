@@ -8,6 +8,9 @@ enum Mode {
 Mode mode = Mode.BOIDS;
 
 float UIScl = 1.0f;
+int background_c = 70;
+int obs_c = 175;
+int boid_c = 255;
 /*
 ArrayList<Boid> boids;
  PVector target;
@@ -101,13 +104,13 @@ void setup() {
 }
 
 void draw() {
-  background(70);
+  background(background_c);
 
   flock.run();
   obstacles.render();
 
   if (mode == Mode.ADD_OBS) {
-    stroke(175);
+    stroke(obs_c);
     strokeWeight(20);
     point(mouseX, mouseY);
   } else if (mode == Mode.ERASE_OBS) {
@@ -116,7 +119,7 @@ void draw() {
     point(mouseX, mouseY);
   }
   if (creating_obstacles) {
-    stroke(175);
+    stroke(obs_c);
     strokeWeight(20);
     line(obstacles.start_p.x, obstacles.start_p.y, mouseX, mouseY);
   }
