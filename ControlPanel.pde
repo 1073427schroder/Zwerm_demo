@@ -304,12 +304,14 @@ public void rbtn_seeking(int mode) {
 public void rbtn_mode(int state) {
   switch (state) {
   case 0: 
+    creating_obstacles = false;
     mode = Mode.BOIDS;
     break;
   case 1:
     mode = Mode.ADD_OBS;
     break;
-  case 2:
+  case 2:  
+    creating_obstacles = false;
     mode = Mode.ERASE_OBS;
     break;
   default:

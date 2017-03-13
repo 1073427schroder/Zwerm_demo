@@ -70,6 +70,7 @@ class Boid {
     PVector avo = cursor_avoiding();
     PVector obs = avoidObstacle();
 
+
     sep.mult(s_power*0.015);
     ali.mult(a_power*0.01);
     coh.mult(c_power*0.01);
@@ -77,11 +78,14 @@ class Boid {
     avo.mult(1.0);
     obs.mult(2.0);
 
-    applyForce(sep);
-    applyForce(ali);
-    applyForce(coh);
-    applyForce(see);
-    applyForce(avo);
+    //println(obs.mag());
+    if ( obs.mag() == 0) {
+      applyForce(sep);
+      applyForce(ali);
+      applyForce(coh);
+      applyForce(see);
+      applyForce(avo);
+    }
     applyForce(obs);
   }
 
