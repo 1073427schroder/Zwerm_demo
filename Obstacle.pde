@@ -9,7 +9,7 @@ class Obstacle {
 
   void drawObstacle() {
     stroke(obs_c);
-    strokeWeight(20);
+    strokeWeight(20*obs_scl);
     line(start_position.x, start_position.y, end_position.x, end_position.y);
     //println("sx: " + start_position.x +" sy: "+start_position.y +" ex: "+end_position.x +" ey: "+ end_position.y);
   }
@@ -18,7 +18,7 @@ class Obstacle {
     float distance = calcDistPointToLine(start_position, end_position, new PVector(m_x,m_y), new PVector());
     distance = sqrt(distance);
     //println(distance);
-    if (distance < 20) return true;
+    if (distance < 20*obs_scl) return true;
     else return false;
     //return false;
   }

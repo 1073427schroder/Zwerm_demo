@@ -187,6 +187,24 @@ class ControlPanel {
       .moveTo("color")
       .setLabel("Obstacle Color")
       ;
+      
+      this.cp5.addTab("scaling");
+      
+      cp5.addSlider("boid_scl")
+      .setPosition(width - this.cp_width + 20, 20)
+      .setRange(0.5, 5)
+      .setSize(100, 20)
+      .setLabel("Boid Scale")
+      .moveTo("scaling")
+      ;
+
+      cp5.addSlider("obs_scl")
+      .setPosition(width - this.cp_width + 20, 60)
+      .setRange(0.5, 5)
+      .setSize(100, 20)
+      .setLabel("Obstactle Scale")
+      .moveTo("scaling")
+      ;
 
 
 
@@ -273,6 +291,13 @@ class ControlPanel {
 
     ControlWindow wind = this.cp5.getWindow();
     wind.setPositionOfTabs(width - this.cp_width,0);
+    
+    
+      cp5.getController("boid_scl")
+      .setPosition(width - this.cp_width + 20, 20);
+      
+      cp5.getController("obs_scl")
+      .setPosition(width - this.cp_width + 20, 60);
 
     //Tab test = this.cp5.get(Tab.class, "color");
     //println(test.isMoveable());

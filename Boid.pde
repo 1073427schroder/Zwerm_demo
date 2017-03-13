@@ -318,9 +318,9 @@ class Boid {
     translate(location.x, location.y);
     rotate(theta);
     beginShape(TRIANGLES);
-    vertex(0, -r*2);
-    vertex(-r, r*2);
-    vertex(r, r*2);
+    vertex(0, -r*2*boid_scl);
+    vertex(-r*boid_scl, r*2*boid_scl);
+    vertex(r*boid_scl, r*2*boid_scl);
     endShape(CLOSE);
     popMatrix();
   }
