@@ -78,7 +78,7 @@ class Boid {
     avo.mult(1.0);
     obs.mult(2.0);
 
-    println(obs.mag());
+    //println(obs.mag());
     if ( obs.mag() == 0) {
       applyForce(sep);
       applyForce(ali);
