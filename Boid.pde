@@ -7,6 +7,7 @@ class Boid {
   float maxspeed;
   float maxforce;
   float d;
+  int color_b;
 
   Boid(float x, float y) {
     obstacle_vector = new PVector(0, 0);
@@ -19,6 +20,7 @@ class Boid {
     maxspeed = 3;
     maxforce = 0.1;
     d = 150;
+    color_b = 255;
   }
 
   void run(ArrayList<Boid> boids) {
@@ -312,8 +314,8 @@ class Boid {
     noStroke();
     strokeWeight(1);
     float theta = velocity.heading() + PI/2;
-    fill(255);
-    stroke(255);
+    fill(this.color_b);
+    //stroke(255);
     pushMatrix();
     translate(location.x, location.y);
     rotate(theta);
