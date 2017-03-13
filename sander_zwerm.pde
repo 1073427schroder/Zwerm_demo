@@ -152,14 +152,19 @@ void draw() {
 void mouseDragged() {
   if (mode == Mode.BOIDS && mouseButton == RIGHT && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height) {
     flock.addBoid(new Boid(mouseX, mouseY));
+  } else if (mode == Mode.ERASE_OBS && mouseButton == LEFT && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height) {
+    obstacles.eraseObstacle(mouseX, mouseY);
   }
 }
 
 void mousePressed() {
-  if (mode == Mode.ADD_OBS && !creating_obstacles&& mouseButton == LEFT && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height) {
+  if (mode == Mode.ADD_OBS && !creating_obstacles && mouseButton == LEFT && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height) {
     obstacles.startObstacle(mouseX, mouseY);
   } else  if (mode == Mode.ADD_OBS && mouseButton == LEFT && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height) {
     obstacles.endObstacle(mouseX, mouseY);
+  } else  if (mode == Mode.ADD_OBS && creating_obstacles && mouseButton == RIGHT && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height) {
+    obstacles.endObstacle(mouseX, mouseY);
+    obstacles.startObstacle(mouseX, mouseY);
   }
   if (mode == Mode.ERASE_OBS) {
     obstacles.eraseObstacle(mouseX, mouseY);
