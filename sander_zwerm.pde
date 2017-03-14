@@ -9,7 +9,7 @@ Mode mode = Mode.BOIDS;
 
 float obs_scl = 1.0f;
 float boid_scl = 2.0f;
-float UIScl = 1.0f;
+float ui_scl = 1.0f;
 int background_c = 255; //70
 int obs_c = #D12A2A; //175
 int boid_c = #532AD1; //255
@@ -91,7 +91,7 @@ void setup() {
     Boid b = new Boid(width/2, height/2);
     flock.addBoid(b);
   }
-  cpanel = new ControlPanel(this, UIScl);
+  cpanel = new ControlPanel(this);
   /*
   //boids = new ArrayList<Boid>();
    target = new PVector(width / 2, height / 2);
@@ -156,6 +156,7 @@ void draw() {
   //println(separation);
   //println(alignment);
   //println("-----");
+  //println(ui_scl);
 }
 
 void mouseDragged() {

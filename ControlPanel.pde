@@ -5,22 +5,20 @@ class ControlPanel {
   int cp_width;
   ControlP5 cp5;
   int old_width;
-  float scl;
 
   //constructor
-  ControlPanel (PApplet thePApplet, float scl) {
+  ControlPanel (PApplet thePApplet) {
     this.show = true;
-    this.setWidth();    
-    this.scl = scl;
+    this.setWidth();  
 
     this.cp5 = new ControlP5(thePApplet);
     ControlWindow tmp = this.cp5.getWindow();
-    tmp.setPositionOfTabs(width - this.cp_width,0);
+    tmp.setPositionOfTabs(width - this.cp_width, 0);
 
-    this.cp5.setFont(createFont("Verdana", 12 * this.scl));
+    this.cp5.setFont(createFont("Verdana", 12));
 
     this.addControlP5Elements();
-    
+
 
     old_width = width;
   }
@@ -58,7 +56,7 @@ class ControlPanel {
   }
 
   void setWidth() {
-    this.cp_width = 300;
+    this.cp_width = floor(300 * ui_scl);
   }
 
   void toggleShow() {
@@ -182,15 +180,15 @@ class ControlPanel {
     cp5.addColorWheel("background_c", width - this.cp_width + 20, 20 + this.cp_width - 20, 200  )
       .moveTo("color")
       .setLabel("Background Color");
-      ;
+    ;
     cp5.addColorWheel("obs_c", width - this.cp_width + 20, 20 + this.cp_width*2 - 20, 200 )
       .moveTo("color")
       .setLabel("Obstacle Color")
       ;
-      
-      this.cp5.addTab("scaling");
-      
-      cp5.addSlider("boid_scl")
+
+    this.cp5.addTab("scaling");
+
+    cp5.addSlider("boid_scl")
       .setPosition(width - this.cp_width + 20, 20)
       .setRange(0.5, 10)
       .setSize(100, 20)
@@ -198,7 +196,7 @@ class ControlPanel {
       .moveTo("scaling")
       ;
 
-      cp5.addSlider("obs_scl")
+    cp5.addSlider("obs_scl")
       .setPosition(width - this.cp_width + 20, 60)
       .setRange(0.5, 10)
       .setSize(100, 20)
@@ -206,7 +204,14 @@ class ControlPanel {
       .moveTo("scaling")
       ;
 
-
+    //cp5.addSlider("ui_scl_sl")
+    //  .setPosition(width - this.cp_width + 20, 100)
+    //  .setValue(ui_scl)
+    //  .setRange(0.5, 3)
+    //  .setSize(100, 20)
+    //  .setLabel("UI Scale")
+    //  .moveTo("scaling")
+    //  ;
 
 
     //.activate(2);
@@ -230,6 +235,8 @@ class ControlPanel {
 
 
   void resetPositionControls() {
+
+    //println("resetting...");
     //String[] controllers = { "btn_clear", "rbtn_seeking"};
 
     //println(controllers.length);
@@ -290,23 +297,27 @@ class ControlPanel {
 
 
     ControlWindow wind = this.cp5.getWindow();
-    wind.setPositionOfTabs(width - this.cp_width,0);
-    
-    
-      cp5.getController("boid_scl")
+    wind.setPositionOfTabs(width - this.cp_width, 0);
+
+
+    cp5.getController("boid_scl")
       .setPosition(width - this.cp_width + 20, 20);
-      
-      cp5.getController("obs_scl")
+
+    cp5.getController("obs_scl")
       .setPosition(width - this.cp_width + 20, 60);
+
+
+    //cp5.getController("ui_scl_sl")
+      //.setPosition(width - this.cp_width + 20, 100);
 
     //Tab test = this.cp5.get(Tab.class, "color");
     //println(test.isMoveable());
-    
+
     //this.cp5.getTab("color")
     ////.setPosition(50,50)
     //.setMoveable(true)
     //;
-    
+
 
 
 
@@ -347,6 +358,7 @@ class ControlPanel {
     //.setLabel("Alignment");
     ////reset first toggle
     //alignment = !alignment;
+    this.old_width = width;
   }
 }
 
@@ -405,6 +417,12 @@ void c(int c) {
   flock.changeColor(c);
   boid_c = c;
 }
+
+//void ui_scl_sl(float scl) {
+//  ui_scl = scl;
+//  cpanel.setWidth();
+//  cpanel.resetPositionControls();
+//}
 
 
 /*
