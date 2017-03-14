@@ -13,7 +13,7 @@ float UIScl = 1.0f;
 int background_c = 255; //70
 int obs_c = #D12A2A; //175
 int boid_c = #532AD1; //255
-int eraser_c = 255; //255
+int eraser_c = #E000FF; //255
 
 /*
 ArrayList<Boid> boids;
@@ -76,6 +76,7 @@ void setup() {
 
 
   size(displayWidth, displayHeight);
+  //fullScreen();
   //size(800, 600);
   //size(1280, 800);
   pixelDensity(displayDensity());
