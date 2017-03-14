@@ -97,7 +97,7 @@ class Boid {
       for (Boid other : boids) {
         float d = PVector.dist(location, other.location);
 
-        if ((d >0) && (d < desired_s)) {
+        if ((d >0) && (d < desired_s * boid_scl * 0.5)) {
           PVector diff = PVector.sub(location, other.location);
           diff.normalize();
           diff.div(d);
@@ -217,7 +217,7 @@ class Boid {
       int count = 0;
       for (Boid other : boids) {
         float d = PVector.dist(location, other.location);
-        if ((d > 0) && (d < neighbor_d)) {
+        if ((d > 0) && (d < neighbor_d  * boid_scl * 0.5)) {
           sum.add(other.velocity);
           count++;
         }
@@ -241,7 +241,7 @@ class Boid {
       int count = 0;
       for (Boid other : boids) {
         float d = PVector.dist(location, other.location);
-        if ((d>0) && (d<neighbor_d)) {
+        if ((d>0) && (d<neighbor_d  * boid_scl * 0.5)) {
           sum.add(other.location);
           count++;
         }
