@@ -1,5 +1,5 @@
 //Test code zwerm
-//Code based of Daniel Shiffman's Nature of Code Chapter 6
+//Start of code based of Daniel Shiffman's Nature of Code Chapter 6
 
 
 enum Mode {
@@ -8,7 +8,7 @@ enum Mode {
 Mode mode = Mode.BOIDS;
 
 float obs_scl = 1.0f;
-float boid_scl = 3.0f;
+float boid_scl = 2.0f;
 float UIScl = 1.0f;
 int background_c = 255; //70
 int obs_c = #D12A2A; //175
