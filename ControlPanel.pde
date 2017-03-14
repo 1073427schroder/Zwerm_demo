@@ -202,7 +202,7 @@ class ControlPanel {
       .setPosition(width - this.cp_width + 20, 60)
       .setRange(0.5, 10)
       .setSize(100, 20)
-      .setLabel("Obstactle Scale")
+      .setLabel("Obstacle Scale")
       .moveTo("scaling")
       ;
 
