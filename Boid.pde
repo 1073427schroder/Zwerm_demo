@@ -278,7 +278,8 @@ class Boid {
     if (sum.mag() > 0) {
       sum.setMag(maxspeed);
       PVector steer = PVector.sub(sum, velocity);
-      steer.limit(maxforce * 1.5);
+      steer.limit(maxforce);
+      //steer.limit(maxforce * 1.5);
       //applyForce(steer);
       return steer;
     } else     return(new PVector(0, 0));
