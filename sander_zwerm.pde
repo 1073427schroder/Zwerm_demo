@@ -1,5 +1,5 @@
 //Test code zwerm
-//Code based of Daniel Shiffman's Nature of Code Chapter 6
+//Start of code based of Daniel Shiffman's Nature of Code Chapter 6
 
 
 enum Mode {
@@ -7,10 +7,14 @@ enum Mode {
 }
 Mode mode = Mode.BOIDS;
 
-float UIScl = 1.0f;
-int background_c = 70;
-int obs_c = 175;
-int boid_c = 255;
+float obs_scl = 1.0f;
+float boid_scl = 2.0f;
+float ui_scl = 1.0f;
+int background_c = 255; //70
+int obs_c = #D12A2A; //175
+int boid_c = #532AD1; //255
+int eraser_c = #E000FF; //255
+
 /*
 ArrayList<Boid> boids;
  PVector target;
@@ -72,6 +76,7 @@ void setup() {
 
 
   size(displayWidth, displayHeight);
+  //fullScreen();
   //size(800, 600);
   //size(1280, 800);
   pixelDensity(displayDensity());
@@ -86,7 +91,7 @@ void setup() {
     Boid b = new Boid(width/2, height/2);
     flock.addBoid(b);
   }
-  cpanel = new ControlPanel(this, UIScl);
+  cpanel = new ControlPanel(this);
   /*
   //boids = new ArrayList<Boid>();
    target = new PVector(width / 2, height / 2);
@@ -111,16 +116,16 @@ void draw() {
 
   if (mode == Mode.ADD_OBS) {
     stroke(obs_c);
-    strokeWeight(20);
+    strokeWeight(20*obs_scl);
     point(mouseX, mouseY);
   } else if (mode == Mode.ERASE_OBS) {
-    stroke(255);
-    strokeWeight(20);
+    stroke(eraser_c);
+    strokeWeight(20*obs_scl);
     point(mouseX, mouseY);
   }
   if (creating_obstacles) {
     stroke(obs_c);
-    strokeWeight(20);
+    strokeWeight(20*obs_scl);
     line(obstacles.start_p.x, obstacles.start_p.y, mouseX, mouseY);
   }
 
@@ -151,6 +156,7 @@ void draw() {
   //println(separation);
   //println(alignment);
   //println("-----");
+  //println(ui_scl);
 }
 
 void mouseDragged() {
