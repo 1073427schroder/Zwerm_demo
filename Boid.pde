@@ -255,7 +255,12 @@ class Boid {
     } else return new PVector(0, 0);
   }
 
+  // obstacle avoidance way
+  // Force field way to be converted to obstacle avoidance
+  //pseudocode
+  // 
   PVector avoidObstacle() {
+    float looking_distance = 40;
     PVector sum = new PVector(0, 0);
     int count = 0;
     //obstacles.checkDistance
@@ -263,7 +268,7 @@ class Boid {
       obstacle_vector.set(0, 0);
       float dist = o.calcDistPointToLine(o.start_position, o.end_position, location, obstacle_vector);
       dist = sqrt(dist);
-      if (dist < 40) {
+      if (dist < looking_distance) {
         PVector diff = PVector.sub(location, obstacle_vector);
         diff.normalize();
         diff.div(d*d);        // Weight by distance
@@ -279,12 +284,48 @@ class Boid {
       sum.setMag(maxspeed);
       PVector steer = PVector.sub(sum, velocity);
       steer.limit(maxforce);
+      //steer.rotate(steer.heading() + PI/2);
+      //velocity.heading() + PI/2
+      //println(steer.heading());
       //steer.limit(maxforce * 1.5);
       //applyForce(steer);
       return steer;
     } else     return(new PVector(0, 0));
   }
 
+
+
+  // Force field way
+  //PVector avoidObstacle() {
+  //  PVector sum = new PVector(0, 0);
+  //  int count = 0;
+  //  //obstacles.checkDistance
+  //  for (Obstacle o : obstacles.obstacles) {
+  //    obstacle_vector.set(0, 0);
+  //    float dist = o.calcDistPointToLine(o.start_position, o.end_position, location, obstacle_vector);
+  //    dist = sqrt(dist);
+  //    if (dist < 40) {
+  //      PVector diff = PVector.sub(location, obstacle_vector);
+  //      diff.normalize();
+  //      diff.div(d*d);        // Weight by distance
+  //      sum.add(diff);
+  //      count++;            // Keep track of how many
+  //    }
+  //  }
+
+  //if (count > 0) {
+  //  sum.div(count);
+  //}
+  //if (sum.mag() > 0) {
+  //  sum.setMag(maxspeed);
+  //  PVector steer = PVector.sub(sum, velocity);
+  //  steer.limit(maxforce);
+  //  //steer.limit(maxforce * 1.5);
+  //  //applyForce(steer);
+  //  return steer;
+  //} else     return(new PVector(0, 0));
+  //}
+  //
 
   /*
   void wrap() {
