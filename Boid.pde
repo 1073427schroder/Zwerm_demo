@@ -17,8 +17,8 @@ class Boid {
     location = new PVector(x, y);
     r = 2.0;
     maxspeed = 3;
-    //maxforce = 0.1;
-    maxforce = 0.05;
+    maxforce = 0.1;
+    //maxforce = 0.075;
     d = 150;
   }
 
@@ -79,23 +79,26 @@ class Boid {
     avo.mult(1.0);
     obs.mult(3.0);
 
-    applyForce(sep);
-    applyForce(ali);
-    applyForce(coh);
-    applyForce(see);
-    applyForce(avo);
+    //applyForce(sep);
+    //applyForce(ali);
+    //applyForce(coh);
+    //applyForce(see);
+    //applyForce(avo);
 
-    applyForce(obs);
-
-    ////println(obs.mag());
-    //if ( obs.mag() == 0) {
-    //  applyForce(sep);
-    //  applyForce(ali);
-    //  applyForce(coh);
-    //  applyForce(see);
-    //  applyForce(avo);
-    //}
     //applyForce(obs);
+
+    //println(obs.mag());
+    if ( obs.mag() == 0) {
+      applyForce(sep);
+      applyForce(ali);
+      applyForce(coh);
+      applyForce(see);
+      applyForce(avo);
+    }
+    applyForce(obs);
+    sep.mult(0.5);
+    applyForce(sep);
+    //applyForce(see);
   }
 
   PVector separate(ArrayList<Boid> boids) {
@@ -267,16 +270,22 @@ class Boid {
   //************************************************************************************************//
   // obstacle avoidance way
   // Force field way to be converted to obstacle avoidance
-  //pseudocode
-  // 
+  // take two, keep heading of group / individual
+  // or just future predicting
+  // future predicting
   PVector avoidObstacle() {
-    float looking_distance = 80;
+    float looking_distance = 30;
     PVector sum = new PVector(0, 0);
+    PVector more_velocity = new PVector(0,0);
+    more_velocity.set(velocity);
+    more_velocity.mult(30);
+    PVector future_location = new PVector(0,0);
+    future_location.set(PVector.add(location, more_velocity));
     int count = 0;
     //obstacles.checkDistance
     for (Obstacle o : obstacles.obstacles) {
       obstacle_vector.set(0, 0);
-      float dist = o.calcDistPointToLine(o.start_position, o.end_position, location, obstacle_vector);
+      float dist = o.calcDistPointToLine(o.start_position, o.end_position, future_location, obstacle_vector);
       dist = sqrt(dist);
       if (dist < looking_distance) {
         if (o.start_position.dist(location) > o.end_position.dist(location)) obstacle_vector.set(o.start_position);
@@ -296,7 +305,7 @@ class Boid {
       sum.setMag(maxspeed);
       PVector steer = PVector.sub(sum, velocity);
       //PVector steer = PVector.sub(velocity, sum);
-      steer.limit(maxforce*2);
+      steer.limit(maxforce);
       //steer.rotate(steer.heading() + PI/2);
       //velocity.heading() + PI/2
       //println(steer.heading());
@@ -307,6 +316,48 @@ class Boid {
   }
 
   //************************************************************************************************//
+
+  //// obstacle avoidance way
+  //// Force field way to be converted to obstacle avoidance
+  ////pseudocode
+  //// 
+  //PVector avoidObstacle() {
+  //  float looking_distance = 80;
+  //  PVector sum = new PVector(0, 0);
+  //  int count = 0;
+  //  //obstacles.checkDistance
+  //  for (Obstacle o : obstacles.obstacles) {
+  //    obstacle_vector.set(0, 0);
+  //    float dist = o.calcDistPointToLine(o.start_position, o.end_position, location, obstacle_vector);
+  //    dist = sqrt(dist);
+  //    if (dist < looking_distance) {
+  //      if (o.start_position.dist(location) > o.end_position.dist(location)) obstacle_vector.set(o.start_position);
+  //      else obstacle_vector.set(o.end_position);
+  //      PVector diff = PVector.sub(location, obstacle_vector);
+  //      diff.normalize();
+  //      diff.div(d);        // Weight by distance
+  //      sum.add(diff);
+  //      count++;            // Keep track of how many
+  //    }
+  //  }
+
+  //  if (count > 0) {
+  //    sum.div(count);
+  //  }
+  //  if (sum.mag() > 0) {
+  //    sum.setMag(maxspeed);
+  //    PVector steer = PVector.sub(sum, velocity);
+  //    //PVector steer = PVector.sub(velocity, sum);
+  //    steer.limit(maxforce*2);
+  //    //steer.rotate(steer.heading() + PI/2);
+  //    //velocity.heading() + PI/2
+  //    //println(steer.heading());
+  //    //steer.limit(maxforce * 1.5);
+  //    //applyForce(steer);
+  //    return steer;
+  //  } else     return(new PVector(0, 0));
+  //}
+
 
 
   // Force field way
