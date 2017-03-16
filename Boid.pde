@@ -77,7 +77,7 @@ class Boid {
     coh.mult(c_power*0.01);
     see.mult(1.0);
     avo.mult(1.0);
-    obs.mult(3.0);
+    obs.mult(4.0);
 
     //applyForce(sep);
     //applyForce(ali);
@@ -98,6 +98,8 @@ class Boid {
     applyForce(obs);
     sep.mult(0.5);
     applyForce(sep);
+    ali.mult(0.5);
+    applyForce(ali);
     //applyForce(see);
   }
 
@@ -288,8 +290,10 @@ class Boid {
       float dist = o.calcDistPointToLine(o.start_position, o.end_position, future_location, obstacle_vector);
       dist = sqrt(dist);
       if (dist < looking_distance) {
-        if (o.start_position.dist(location) > o.end_position.dist(location)) obstacle_vector.set(o.start_position);
+        future_location.add(more_velocity.mult(20));
+        if (o.start_position.dist(future_location) > o.end_position.dist(future_location)) obstacle_vector.set(o.start_position);
         else obstacle_vector.set(o.end_position);
+        //obstacle_vector.set(o.end_position);
         PVector diff = PVector.sub(location, obstacle_vector);
         diff.normalize();
         diff.div(d);        // Weight by distance
