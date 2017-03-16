@@ -255,12 +255,13 @@ class Boid {
     } else return new PVector(0, 0);
   }
 
+//************************************************************************************************//
   // obstacle avoidance way
   // Force field way to be converted to obstacle avoidance
   //pseudocode
   // 
   PVector avoidObstacle() {
-    float looking_distance = 40;
+    float looking_distance = 50;
     PVector sum = new PVector(0, 0);
     int count = 0;
     //obstacles.checkDistance
@@ -269,6 +270,8 @@ class Boid {
       float dist = o.calcDistPointToLine(o.start_position, o.end_position, location, obstacle_vector);
       dist = sqrt(dist);
       if (dist < looking_distance) {
+        if (o.start_position.dist(location) > o.end_position.dist(location)) obstacle_vector.set(o.start_position);
+        else obstacle_vector.set(o.end_position);
         PVector diff = PVector.sub(location, obstacle_vector);
         diff.normalize();
         diff.div(d*d);        // Weight by distance
@@ -283,6 +286,7 @@ class Boid {
     if (sum.mag() > 0) {
       sum.setMag(maxspeed);
       PVector steer = PVector.sub(sum, velocity);
+      //PVector steer = PVector.sub(velocity, sum);
       steer.limit(maxforce);
       //steer.rotate(steer.heading() + PI/2);
       //velocity.heading() + PI/2
@@ -293,6 +297,7 @@ class Boid {
     } else     return(new PVector(0, 0));
   }
 
+//************************************************************************************************//
 
 
   // Force field way
