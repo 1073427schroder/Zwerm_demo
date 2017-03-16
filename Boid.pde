@@ -17,7 +17,8 @@ class Boid {
     location = new PVector(x, y);
     r = 2.0;
     maxspeed = 3;
-    maxforce = 0.1;
+    //maxforce = 0.1;
+    maxforce = 0.05;
     d = 150;
   }
 
@@ -71,22 +72,30 @@ class Boid {
     PVector obs = avoidObstacle();
 
 
-    sep.mult(s_power*0.015);
+    sep.mult(s_power*0.02);
     ali.mult(a_power*0.01);
     coh.mult(c_power*0.01);
     see.mult(1.0);
     avo.mult(1.0);
-    obs.mult(2.0);
+    obs.mult(3.0);
 
-    //println(obs.mag());
-    if ( obs.mag() == 0) {
-      applyForce(sep);
-      applyForce(ali);
-      applyForce(coh);
-      applyForce(see);
-      applyForce(avo);
-    }
+    applyForce(sep);
+    applyForce(ali);
+    applyForce(coh);
+    applyForce(see);
+    applyForce(avo);
+
     applyForce(obs);
+
+    ////println(obs.mag());
+    //if ( obs.mag() == 0) {
+    //  applyForce(sep);
+    //  applyForce(ali);
+    //  applyForce(coh);
+    //  applyForce(see);
+    //  applyForce(avo);
+    //}
+    //applyForce(obs);
   }
 
   PVector separate(ArrayList<Boid> boids) {
@@ -255,13 +264,13 @@ class Boid {
     } else return new PVector(0, 0);
   }
 
-//************************************************************************************************//
+  //************************************************************************************************//
   // obstacle avoidance way
   // Force field way to be converted to obstacle avoidance
   //pseudocode
   // 
   PVector avoidObstacle() {
-    float looking_distance = 50;
+    float looking_distance = 80;
     PVector sum = new PVector(0, 0);
     int count = 0;
     //obstacles.checkDistance
@@ -274,7 +283,7 @@ class Boid {
         else obstacle_vector.set(o.end_position);
         PVector diff = PVector.sub(location, obstacle_vector);
         diff.normalize();
-        diff.div(d*d);        // Weight by distance
+        diff.div(d);        // Weight by distance
         sum.add(diff);
         count++;            // Keep track of how many
       }
@@ -287,7 +296,7 @@ class Boid {
       sum.setMag(maxspeed);
       PVector steer = PVector.sub(sum, velocity);
       //PVector steer = PVector.sub(velocity, sum);
-      steer.limit(maxforce);
+      steer.limit(maxforce*2);
       //steer.rotate(steer.heading() + PI/2);
       //velocity.heading() + PI/2
       //println(steer.heading());
@@ -297,7 +306,7 @@ class Boid {
     } else     return(new PVector(0, 0));
   }
 
-//************************************************************************************************//
+  //************************************************************************************************//
 
 
   // Force field way
