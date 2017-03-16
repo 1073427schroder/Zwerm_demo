@@ -7,6 +7,7 @@ class Boid {
   float maxspeed;
   float maxforce;
   float d;
+  float prev_rotation;
 
   Boid(float x, float y) {
     obstacle_vector = new PVector(0, 0);
@@ -20,6 +21,7 @@ class Boid {
     maxforce = 0.1;
     //maxforce = 0.075;
     d = 150;
+    prev_rotation = velocity.heading();
   }
 
   void run(ArrayList<Boid> boids) {
@@ -278,10 +280,10 @@ class Boid {
   PVector avoidObstacle() {
     float looking_distance = 30;
     PVector sum = new PVector(0, 0);
-    PVector more_velocity = new PVector(0,0);
+    PVector more_velocity = new PVector(0, 0);
     more_velocity.set(velocity);
     more_velocity.mult(30);
-    PVector future_location = new PVector(0,0);
+    PVector future_location = new PVector(0, 0);
     future_location.set(PVector.add(location, more_velocity));
     int count = 0;
     //obstacles.checkDistance
@@ -297,8 +299,23 @@ class Boid {
         PVector diff = PVector.sub(location, obstacle_vector);
         diff.normalize();
         diff.div(d);        // Weight by distance
-        sum.add(diff);
-        count++;            // Keep track of how many
+        sum.set(diff);
+        //dist_smallest = dist;
+        //sum.add(diff);
+        //count++;            // Keep track of how many
+      }
+    }
+    //cut corners prevention
+    //overide when current loc is to close
+    for (Obstacle o : obstacles.obstacles) {
+      obstacle_vector.set(0, 0);
+      float dist = o.calcDistPointToLine(o.start_position, o.end_position, location, obstacle_vector);
+      dist = sqrt(dist);
+      if (dist < 25) {
+        PVector diff = PVector.sub(location, obstacle_vector);
+        diff.normalize();
+        sum.set(diff);
+        count = 1;
       }
     }
 
@@ -423,6 +440,7 @@ class Boid {
     noStroke();
     strokeWeight(1);
     float theta = velocity.heading() + PI/2;
+    //float theta = ((velocity.heading() + prev_rotation) * 0.5) + PI/2;
     fill(boid_c);
     //stroke(255);
     pushMatrix();
@@ -434,5 +452,6 @@ class Boid {
     vertex(r*boid_scl, r*2*boid_scl);
     endShape(CLOSE);
     popMatrix();
+    //prev_rotation = theta;
   }
 }
