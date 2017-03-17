@@ -7,7 +7,8 @@ class Boid {
   float maxspeed;
   float maxforce;
   float d;
-  float prev_rotation;
+  PVector[] prev_rotation;
+
 
   Boid(float x, float y) {
     obstacle_vector = new PVector(0, 0);
@@ -21,7 +22,13 @@ class Boid {
     maxforce = 0.1;
     //maxforce = 0.075;
     d = 150;
-    prev_rotation = velocity.heading();
+    prev_rotation = new PVector[5];
+    for (int i = 0; i < prev_rotation.length; i++) {
+      PVector tmp_vel = new PVector(0, 0);
+      tmp_vel.set(velocity);
+      tmp_vel.normalize();
+      prev_rotation[i] = tmp_vel;
+    }
   }
 
   void run(ArrayList<Boid> boids) {
@@ -447,6 +454,26 @@ class Boid {
     strokeWeight(1);
     float theta = velocity.heading() + PI/2;
     //float theta = ((velocity.heading() + prev_rotation) * 0.5) + PI/2;
+    //average rotation
+    //shift list 1 down
+    for (int i = 0; i < prev_rotation.length - 1; i++) {
+      prev_rotation[i] = prev_rotation[i+1];
+    }
+    //put in current value
+    PVector tmp_vel = new PVector(0, 0);
+    tmp_vel.set(velocity);
+    tmp_vel.normalize();
+    prev_rotation[prev_rotation.length - 1] = tmp_vel;
+    //add all values
+    PVector dir =  new PVector(0, 0);
+    for (int i = 0; i < prev_rotation.length; i++) {
+      dir.add(prev_rotation[i]);
+    }
+    //average the values
+    dir.div(prev_rotation.length);
+    theta =  dir.heading() + PI/2 ;
+
+    //end
     fill(boid_c);
     //stroke(255);
     pushMatrix();
