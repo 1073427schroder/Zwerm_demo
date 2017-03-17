@@ -7,6 +7,7 @@ class Boid {
   float maxspeed;
   float maxforce;
   float d;
+  float prev_rotation;
 
   Boid(float x, float y) {
     obstacle_vector = new PVector(0, 0);
@@ -18,7 +19,9 @@ class Boid {
     r = 2.0;
     maxspeed = 3;
     maxforce = 0.1;
+    //maxforce = 0.075;
     d = 150;
+    prev_rotation = velocity.heading();
   }
 
   void run(ArrayList<Boid> boids) {
@@ -71,12 +74,20 @@ class Boid {
     PVector obs = avoidObstacle();
 
 
-    sep.mult(s_power*0.015);
+    sep.mult(s_power*0.02);
     ali.mult(a_power*0.01);
     coh.mult(c_power*0.01);
     see.mult(1.0);
     avo.mult(1.0);
-    obs.mult(2.0);
+    obs.mult(4.0);
+
+    //applyForce(sep);
+    //applyForce(ali);
+    //applyForce(coh);
+    //applyForce(see);
+    //applyForce(avo);
+
+    //applyForce(obs);
 
     //println(obs.mag());
     if ( obs.mag() == 0) {
@@ -85,8 +96,19 @@ class Boid {
       applyForce(coh);
       applyForce(see);
       applyForce(avo);
+      //testing
+      sep.mult(0.5);
+      applyForce(sep);
+      ali.mult(0.5);
+      applyForce(ali);
+    } else {
+      applyForce(obs);
+      sep.mult(0.5);
+      applyForce(sep);
+      ali.mult(0.5);
+      applyForce(ali);
+      //applyForce(see);
     }
-    applyForce(obs);
   }
 
   PVector separate(ArrayList<Boid> boids) {
@@ -255,20 +277,51 @@ class Boid {
     } else return new PVector(0, 0);
   }
 
+  //************************************************************************************************//
+  // obstacle avoidance way
+  // Force field way to be converted to obstacle avoidance
+  // take two, keep heading of group / individual
+  // or just future predicting
+  // future predicting
   PVector avoidObstacle() {
+    float looking_distance = 30;
     PVector sum = new PVector(0, 0);
+    PVector more_velocity = new PVector(0, 0);
+    more_velocity.set(velocity);
+    more_velocity.mult(30);
+    PVector future_location = new PVector(0, 0);
+    future_location.set(PVector.add(location, more_velocity));
     int count = 0;
     //obstacles.checkDistance
     for (Obstacle o : obstacles.obstacles) {
       obstacle_vector.set(0, 0);
-      float dist = o.calcDistPointToLine(o.start_position, o.end_position, location, obstacle_vector);
+      float dist = o.calcDistPointToLine(o.start_position, o.end_position, future_location, obstacle_vector);
       dist = sqrt(dist);
-      if (dist < 40) {
+      if (dist < looking_distance) {
+        future_location.add(more_velocity.mult(20));
+        if (o.start_position.dist(future_location) > o.end_position.dist(future_location)) obstacle_vector.set(o.start_position);
+        else obstacle_vector.set(o.end_position);
+        //obstacle_vector.set(o.end_position);
         PVector diff = PVector.sub(location, obstacle_vector);
         diff.normalize();
-        diff.div(d*d);        // Weight by distance
-        sum.add(diff);
-        count++;            // Keep track of how many
+        diff.div(d);        // Weight by distance
+        sum.set(diff);
+        //dist_smallest = dist;
+        //sum.add(diff);
+        //count++;            // Keep track of how many
+      }
+    }
+    //cut corners prevention
+    //overide when current loc is to close
+    for (Obstacle o : obstacles.obstacles) {
+      obstacle_vector.set(0, 0);
+      float dist = o.calcDistPointToLine(o.start_position, o.end_position, location, obstacle_vector);
+      dist = sqrt(dist);
+      if (dist < 25) {
+        PVector diff = PVector.sub(location, obstacle_vector);
+        diff.normalize();
+        sum.set(diff);
+        count = 1;
       }
     }
 
@@ -278,13 +331,93 @@ class Boid {
     if (sum.mag() > 0) {
       sum.setMag(maxspeed);
       PVector steer = PVector.sub(sum, velocity);
+      //PVector steer = PVector.sub(velocity, sum);
       steer.limit(maxforce);
+      //steer.rotate(steer.heading() + PI/2);
+      //velocity.heading() + PI/2
+      //println(steer.heading());
       //steer.limit(maxforce * 1.5);
       //applyForce(steer);
       return steer;
     } else     return(new PVector(0, 0));
   }
 
+  //************************************************************************************************//
+
+  //// obstacle avoidance way
+  //// Force field way to be converted to obstacle avoidance
+  ////pseudocode
+  //// 
+  //PVector avoidObstacle() {
+  //  float looking_distance = 80;
+  //  PVector sum = new PVector(0, 0);
+  //  int count = 0;
+  //  //obstacles.checkDistance
+  //  for (Obstacle o : obstacles.obstacles) {
+  //    obstacle_vector.set(0, 0);
+  //    float dist = o.calcDistPointToLine(o.start_position, o.end_position, location, obstacle_vector);
+  //    dist = sqrt(dist);
+  //    if (dist < looking_distance) {
+  //      if (o.start_position.dist(location) > o.end_position.dist(location)) obstacle_vector.set(o.start_position);
+  //      else obstacle_vector.set(o.end_position);
+  //      PVector diff = PVector.sub(location, obstacle_vector);
+  //      diff.normalize();
+  //      diff.div(d);        // Weight by distance
+  //      sum.add(diff);
+  //      count++;            // Keep track of how many
+  //    }
+  //  }
+
+  //  if (count > 0) {
+  //    sum.div(count);
+  //  }
+  //  if (sum.mag() > 0) {
+  //    sum.setMag(maxspeed);
+  //    PVector steer = PVector.sub(sum, velocity);
+  //    //PVector steer = PVector.sub(velocity, sum);
+  //    steer.limit(maxforce*2);
+  //    //steer.rotate(steer.heading() + PI/2);
+  //    //velocity.heading() + PI/2
+  //    //println(steer.heading());
+  //    //steer.limit(maxforce * 1.5);
+  //    //applyForce(steer);
+  //    return steer;
+  //  } else     return(new PVector(0, 0));
+  //}
+
+
+
+  // Force field way
+  //PVector avoidObstacle() {
+  //  PVector sum = new PVector(0, 0);
+  //  int count = 0;
+  //  //obstacles.checkDistance
+  //  for (Obstacle o : obstacles.obstacles) {
+  //    obstacle_vector.set(0, 0);
+  //    float dist = o.calcDistPointToLine(o.start_position, o.end_position, location, obstacle_vector);
+  //    dist = sqrt(dist);
+  //    if (dist < 40) {
+  //      PVector diff = PVector.sub(location, obstacle_vector);
+  //      diff.normalize();
+  //      diff.div(d*d);        // Weight by distance
+  //      sum.add(diff);
+  //      count++;            // Keep track of how many
+  //    }
+  //  }
+
+  //if (count > 0) {
+  //  sum.div(count);
+  //}
+  //if (sum.mag() > 0) {
+  //  sum.setMag(maxspeed);
+  //  PVector steer = PVector.sub(sum, velocity);
+  //  steer.limit(maxforce);
+  //  //steer.limit(maxforce * 1.5);
+  //  //applyForce(steer);
+  //  return steer;
+  //} else     return(new PVector(0, 0));
+  //}
+  //
 
   /*
   void wrap() {
@@ -313,6 +446,7 @@ class Boid {
     noStroke();
     strokeWeight(1);
     float theta = velocity.heading() + PI/2;
+    //float theta = ((velocity.heading() + prev_rotation) * 0.5) + PI/2;
     fill(boid_c);
     //stroke(255);
     pushMatrix();
@@ -324,5 +458,6 @@ class Boid {
     vertex(r*boid_scl, r*2*boid_scl);
     endShape(CLOSE);
     popMatrix();
+    //prev_rotation = theta;
   }
 }

@@ -87,7 +87,7 @@ void setup() {
   flock = new Flock();
   seeking = false;
   avoiding = false;
-  for (int i = 0; i < 30; i++) {
+  for (int i = 0; i < 0; i++) {
     Boid b = new Boid(width/2, height/2);
     flock.addBoid(b);
   }
