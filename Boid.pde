@@ -96,13 +96,19 @@ class Boid {
       applyForce(coh);
       applyForce(see);
       applyForce(avo);
+      //testing
+      sep.mult(0.5);
+      applyForce(sep);
+      ali.mult(0.5);
+      applyForce(ali);
+    } else {
+      applyForce(obs);
+      sep.mult(0.5);
+      applyForce(sep);
+      ali.mult(0.5);
+      applyForce(ali);
+      //applyForce(see);
     }
-    applyForce(obs);
-    sep.mult(0.5);
-    applyForce(sep);
-    ali.mult(0.5);
-    applyForce(ali);
-    //applyForce(see);
   }
 
   PVector separate(ArrayList<Boid> boids) {
