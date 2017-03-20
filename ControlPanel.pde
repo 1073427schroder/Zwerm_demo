@@ -375,6 +375,68 @@ class ControlPanel {
     //alignment = !alignment;
     this.old_width = width;
   }
+
+
+  //sync controlpanel with values
+  //Not working yet
+  //possible workaround link the toggles to the values
+  public void sync_panel() {
+
+
+
+    this.cp5.getController("toggle_c");
+
+    this.cp5.getController("toggle_s")
+      .setPosition(width - this.cp_width + 100, 95);
+
+    this.cp5.getController("toggle_a")
+      .setPosition(width - this.cp_width + 180, 95);
+
+    RadioButton tmp = this.cp5.get(RadioButton.class, "rbtn_seeking");
+    tmp.setPosition(width - this.cp_width + 20, 60);
+    tmp = this.cp5.get(RadioButton.class, "rbtn_mode");
+    tmp.setPosition(width - this.cp_width + 20, 340);
+
+    this.cp5.getController("c_power")
+      .setPosition(width - this.cp_width + 20, 140);
+
+    this.cp5.getController("s_power")
+      .setPosition(width - this.cp_width + 20, 180);
+
+    this.cp5.getController("a_power")
+      .setPosition(width - this.cp_width + 20, 220);
+
+
+    this.cp5.getController("desired_s")
+      .setPosition(width - this.cp_width + 20, 260);
+
+
+    this.cp5.getController("neighbor_d")
+      .setPosition(width - this.cp_width + 20, 300);
+
+
+
+    this.cp5.getController("c")
+      .setPosition(width - this.cp_width + 20, 20)
+      ;
+    this.cp5.getController("background_c")
+      .setPosition(width - this.cp_width + 20, 20 + this.cp_width - 40);
+    ;
+    this.cp5.getController("obs_c")
+      .setPosition(width - this.cp_width + 20, 20 + this.cp_width*2 - 40*2);
+    ;
+
+
+    ControlWindow wind = this.cp5.getWindow();
+    wind.setPositionOfTabs(width - this.cp_width, 0);
+
+
+    cp5.getController("boid_scl")
+      .setPosition(width - this.cp_width + 20, 20);
+
+    cp5.getController("obs_scl")
+      .setPosition(width - this.cp_width + 20, 60);
+  }
 }
 
 //ControlP5 events
@@ -409,7 +471,10 @@ public void btn_reset() {
 
   desired_s = 20.0f;
   neighbor_d = 50.0f;
+
+  cpanel.sync_panel();
 }
+
 
 //RF Could be changed out with the right values, maybe yes maybe no
 public void rbtn_seeking(int mode) {
