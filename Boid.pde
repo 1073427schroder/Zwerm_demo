@@ -9,7 +9,7 @@ class Boid {
   float d;
   PVector[] prev_rotation;
 
-
+  //constructor
   Boid(float x, float y) {
     obstacle_vector = new PVector(0, 0);
     acceleration = new PVector(0, 0);
@@ -22,6 +22,8 @@ class Boid {
     maxforce = 0.1;
     //maxforce = 0.075;
     d = 150;
+    
+    //set up for averaging heading
     prev_rotation = new PVector[5];
     for (int i = 0; i < prev_rotation.length; i++) {
       PVector tmp_vel = new PVector(0, 0);
@@ -30,7 +32,8 @@ class Boid {
       prev_rotation[i] = tmp_vel;
     }
   }
-
+  
+  //do all the things required to run
   void run(ArrayList<Boid> boids) {
     flock(boids);
     update();
@@ -38,7 +41,7 @@ class Boid {
     render();
   }
 
-
+  //update location with velocity
   void update() {
     velocity.add(acceleration);
     velocity.limit(maxspeed);
@@ -67,11 +70,12 @@ class Boid {
    }
    }
    */
-
+  //applies force
   void applyForce(PVector force) {
     acceleration.add(force);
   }
-
+  
+  //applies behaviors
   void flock(ArrayList<Boid> boids) {
     PVector sep = separate(boids);
     PVector ali = align(boids);
@@ -117,7 +121,8 @@ class Boid {
       //applyForce(see);
     }
   }
-
+  
+  //separation rule
   PVector separate(ArrayList<Boid> boids) {
     if (separation) {
       PVector sum = new PVector(0, 0, 0);
@@ -149,7 +154,8 @@ class Boid {
       return(new PVector(0, 0));
     } else     return(new PVector(0, 0));
   }
-
+  
+  //seek a target
   PVector seek(PVector target) {
     PVector desired = PVector.sub(target, location);
     desired.normalize();
@@ -160,7 +166,7 @@ class Boid {
     return steer;
   }
 
-
+  //seek the cursor
   PVector cursor_seeking() {
     if (seeking) {
       PVector target = new PVector(mouseX, mouseY);
@@ -177,7 +183,7 @@ class Boid {
   }
 
 
-  //avoiding
+  //avoid the cursor, flee from cursor
   PVector cursor_avoiding() {
     if (avoiding) {
       PVector target = new PVector(mouseX, mouseY);
@@ -194,7 +200,8 @@ class Boid {
     }
   }
 
-
+  //arrive, decrease speed closer to the target
+  //stop at the target
   void arrive(PVector target) {
     PVector desired = PVector.sub(target, location);
 
@@ -213,7 +220,7 @@ class Boid {
     applyForce(steer);
   }
 
-
+  //avoid
   PVector avoid() {
     PVector desired = null;
 
@@ -239,7 +246,8 @@ class Boid {
     }
     return(new PVector(0, 0));
   }
-
+  
+  //alignment rule
   PVector align (ArrayList<Boid> boids) {
     if (alignment) {
       PVector sum = new PVector(0, 0);
@@ -263,7 +271,8 @@ class Boid {
       }
     } else return new PVector(0, 0);
   }
-
+  
+  //cohesion rule
   PVector cohesion (ArrayList<Boid> boids) {
     if (cohesion) {
       PVector sum = new PVector(0, 0);
@@ -449,6 +458,7 @@ class Boid {
     if (location.y > height+r) location.y -= height-r;
   }
 
+  //draw the boid
   void render() {
     noStroke();
     strokeWeight(1);

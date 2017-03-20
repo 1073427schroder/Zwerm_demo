@@ -22,7 +22,8 @@ class ControlPanel {
 
     old_width = width;
   }
-
+  
+  //draw controlpanel
   void render() {
     if (this.show) {
       if (old_width != width) resetPositionControls();
@@ -54,11 +55,13 @@ class ControlPanel {
       text("Framerate: " + round(frameRate), width - this.cp_width + 10, height - 10);
     }
   }
-
+  
+  //set width of control panel
   void setWidth() {
     this.cp_width = floor(300 * ui_scl);
   }
-
+  
+  //hide unhide control panel
   void toggleShow() {
     this.show = !this.show;
     if (this.show) {
@@ -70,7 +73,10 @@ class ControlPanel {
       this.cp5.hide();
     }
   }
-
+  
+  //setup controlP5 elements
+  //RF--RF//
+  //Move the positioning to other function, call other function at the end
   void addControlP5Elements() {
 
     this.cp5.addButton("btn_clear")
@@ -233,7 +239,7 @@ class ControlPanel {
 
 
 
-
+  //this is the other function
   void resetPositionControls() {
 
     //println("resetting...");
@@ -364,10 +370,12 @@ class ControlPanel {
 
 //ControlP5 events
 
+//Clear all boids
 public void btn_clear() {
   flock.clearBoids();
 }
 
+//RF Could be changed out with the right values, maybe yes maybe no
 public void rbtn_seeking(int mode) {
   seeking = false;
   avoiding = false;

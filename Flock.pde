@@ -1,20 +1,24 @@
 class Flock {
   ArrayList<Boid> boids;
-
+  
+  //constructor
   Flock() {
     this.boids = new ArrayList<Boid>();
   }
-
+  
+  //simulate all boids in list
   void run() {
     for (Boid b : this.boids) {
       b.run(this.boids);
     }
   }
-
+  
+  //add a boid
   void addBoid(Boid b) {
     this.boids.add(b);
   }
-
+  
+  //clear all boids
   void clearBoids() {
     this.boids.clear();
   }

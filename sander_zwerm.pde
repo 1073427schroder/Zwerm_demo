@@ -1,12 +1,13 @@
-//Test code zwerm
+//Zwerm demo
 //Start of code based of Daniel Shiffman's Nature of Code Chapter 6
 
-
+//Modes
 enum Mode {
   BOIDS, ADD_OBS, ERASE_OBS
 }
 Mode mode = Mode.BOIDS;
 
+//values for scaling en colors
 float obs_scl = 1.0f;
 float boid_scl = 2.0f;
 float ui_scl = 1.0f;
@@ -15,14 +16,8 @@ int obs_c = #D12A2A; //175
 int boid_c = #532AD1; //255
 int eraser_c = #E000FF; //255
 
-/*
-ArrayList<Boid> boids;
- PVector target;
- Boolean avoiding;
- Boolean separating;
- */
 
-Obstacles obstacles;
+
 Boolean creating_obstacles = false;
 Boolean eraser_mode = false;
 
@@ -41,9 +36,13 @@ Boolean seeking;
 Boolean avoiding;
 ControlPanel cpanel;
 
+//List of all boids
 Flock flock;
 
+//List of all obstacles
+Obstacles obstacles;
 
+//Setup code
 void setup() {
   obstacles = new Obstacles();
   alignment = true;
@@ -58,32 +57,16 @@ void setup() {
   desired_s = 20.0f;
   neighbor_d = 50.0f;
 
-  //int w;
-  //int h;
-  //w = floor(displayWidth * 0.9);
-  //h = floor(displayHeight * 0.9);
-  //surface.setSize(w,h);
-
+  //Window resizable
   surface.setResizable(true);
-  //fullScreen();
-  //println("Displaywidth " + displayWidth);
-  //println("Displayheight " + displayHeight);
-
-  //println("Displaywidth " + floor(displayWidth * 0.9));
-  //println("Displayheight " + floor(displayHeight *0.9));
-  //surface.setSize(floor(displayWidth * 0.9), floor(displayHeight *0.9));
-  //size(1728, 972);
-
-
+  //Set size to max size, otherwise the 
+  //ControlP5 buttons stop working
   size(displayWidth, displayHeight);
-  //fullScreen();
-  //size(800, 600);
-  //size(1280, 800);
+  //Check for highresolution screens
   pixelDensity(displayDensity());
-
-
-
+  //Set frame rate
   frameRate(60);
+  
   flock = new Flock();
   seeking = false;
   avoiding = false;
@@ -92,28 +75,24 @@ void setup() {
     flock.addBoid(b);
   }
   cpanel = new ControlPanel(this);
-  /*
-  //boids = new ArrayList<Boid>();
-   target = new PVector(width / 2, height / 2);
-   seeking = false;
-   avoiding = true;
-   separating = true;
-   */
-  /*
-  for (int i = 0; i<500; i++) {
-   boids.add(new Boid(width / 2, height / 2));
-   }
-   */
-
+  
+  //Set windows size to a more manageable size
   surface.setSize(800, 600);
 }
 
+//Draw code, keeps looping
 void draw() {
+  //Draw background
   background(background_c);
-
+  
+  //Simulate flock
   flock.run();
+  //Render obstacles
   obstacles.render();
 
+  //Add blobs to cursor in certain modes
+  //RF--RF//
+  //Separate function?
   if (mode == Mode.ADD_OBS) {
     stroke(obs_c);
     strokeWeight(20*obs_scl);
@@ -128,81 +107,50 @@ void draw() {
     strokeWeight(20*obs_scl);
     line(obstacles.start_p.x, obstacles.start_p.y, mouseX, mouseY);
   }
+  //END--RF//
 
-  /*
-  for (Boid boid : boids) {
-   boid.applyBehaviors();
-   boid.update();
-   boid.display();
-   }
-   */
-  //fill(255);
-  //stroke(0);
-  //text("Drag the mouse to generate new boids.", 10, height-30);
-  //text("Number of boids: " + flock.boids.size(), 10, height - 20);
-  //text("Framerate: " + round(frameRate), 10, height - 10);
-  /* 
-   if (cpanel.updated) {
-   cpanel.render();
-   cpanel.updated = false;
-   println("Drew the panel!");
-   }
-   */
+  //Draw the control panel
   cpanel.render();
-
-  //println(Cohesion);
-  //println("-----");
-  //println(cohesion);
-  //println(separation);
-  //println(alignment);
-  //println("-----");
-  //println(ui_scl);
 }
+
 
 void mouseDragged() {
   if (mode == Mode.BOIDS && mouseButton == RIGHT && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height) {
+    //Add boids
     flock.addBoid(new Boid(mouseX, mouseY));
   } else if (mode == Mode.ERASE_OBS && mouseButton == LEFT && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height) {
+    //Erase obstacles
     obstacles.eraseObstacle(mouseX, mouseY);
   }
 }
 
 void mousePressed() {
   if (mode == Mode.ADD_OBS && !creating_obstacles && mouseButton == LEFT && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height) {
+    //Start obstacle
     obstacles.startObstacle(mouseX, mouseY);
   } else  if (mode == Mode.ADD_OBS && mouseButton == LEFT && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height) {
+    //End obstacle
     obstacles.endObstacle(mouseX, mouseY);
   } else  if (mode == Mode.ADD_OBS && creating_obstacles && mouseButton == RIGHT && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height) {
+    //Continue obstacle
     obstacles.endObstacle(mouseX, mouseY);
     obstacles.startObstacle(mouseX, mouseY);
   }
   if (mode == Mode.ERASE_OBS) {
+    //Erase obstacle
     obstacles.eraseObstacle(mouseX, mouseY);
   }
 
   if (mode == Mode.BOIDS && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height) {
+    //Add boid
     flock.addBoid(new Boid(mouseX, mouseY));
   }
 }
 
-/*
-void mousePressed() {
- if (mouseButton == LEFT) {
- boids.add(new Boid(mouseX, mouseY));
- } else if (mouseButton == RIGHT) {
- target = new PVector(mouseX, mouseY);
- }
- }
- 
- void mouseDragged() {
- if (mouseButton == RIGHT) {    
- target = new PVector(mouseX, mouseY);
- }
- }
- 
- */
-
+//Keyboard shortcuts
 void keyPressed() {
+  //RF--RF//
+  //change key to lower (case independent)
   switch (key) {
   case 'a':
     //seeking = !seeking;
@@ -248,37 +196,3 @@ void keyPressed() {
     break;
   }
 }
-
-/*
-void mousePressed() {
- if (mouseButton == LEFT) {
- boids.add(new Boid(mouseX, mouseY));
- }
- else if (mouseButton == RIGHT) {
- target = new PVector(mouseX, mouseY);
- }
- }
- */
-/*
-
- void flock(ArrayList<Boid> boids) {
- PVector sep = separate(boids);
- PVector ali = align(boids);
- PVector coh = cohesion(boids);
- 
- sep.mult(1.5);
- ali.mult(1.0);
- coh.mult(1.0);
- 
- applyForce(sep);
- applyForce(ali);
- applyForce(coh);
- }
- 
- */
-
-/*
-void killAllBoids() {
- flock.boids.clear();
- }
- */
