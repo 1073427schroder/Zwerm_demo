@@ -22,7 +22,7 @@ class ControlPanel {
 
     old_width = width;
   }
-  
+
   //draw controlpanel
   void render() {
     if (this.show) {
@@ -55,12 +55,12 @@ class ControlPanel {
       text("Framerate: " + round(frameRate), width - this.cp_width + 10, height - 10);
     }
   }
-  
+
   //set width of control panel
   void setWidth() {
     this.cp_width = floor(300 * ui_scl);
   }
-  
+
   //hide unhide control panel
   void toggleShow() {
     this.show = !this.show;
@@ -73,7 +73,7 @@ class ControlPanel {
       this.cp5.hide();
     }
   }
-  
+
   //setup controlP5 elements
   //RF--RF//
   //Move the positioning to other function, call other function at the end
@@ -82,6 +82,11 @@ class ControlPanel {
     this.cp5.addButton("btn_clear")
       .setPosition(width - this.cp_width + 20, 20)
       .setLabel("Clear")
+      ;
+
+    this.cp5.addButton("btn_reset")
+      .setPosition(width - this.cp_width + 60, 20)
+      .setLabel("Reset")
       ;
 
     this.cp5.addRadioButton("rbtn_seeking")
@@ -258,6 +263,10 @@ class ControlPanel {
       .setPosition(width - this.cp_width + 20, 20);
 
 
+    this.cp5.getController("btn_reset")
+      .setPosition(width - this.cp_width + 100, 20);
+
+
     this.cp5.getController("toggle_c")
       .setPosition(width - this.cp_width + 20, 95);
 
@@ -314,7 +323,7 @@ class ControlPanel {
 
 
     //cp5.getController("ui_scl_sl")
-      //.setPosition(width - this.cp_width + 20, 100);
+    //.setPosition(width - this.cp_width + 20, 100);
 
     //Tab test = this.cp5.get(Tab.class, "color");
     //println(test.isMoveable());
@@ -373,6 +382,33 @@ class ControlPanel {
 //Clear all boids
 public void btn_clear() {
   flock.clearBoids();
+}
+
+//Reset everything
+public void btn_reset() {
+  flock.clearBoids();
+  obstacles.empty();
+  obs_scl = 1.0f;
+  boid_scl = 2.0f;
+  ui_scl = 1.0f;
+  background_c = 255; //70
+  obs_c = #D12A2A; //175
+  boid_c = #532AD1; //255
+  eraser_c = #E000FF; //255
+  creating_obstacles = false;
+  eraser_mode = false;
+
+  alignment = true;
+  cohesion = true;
+  separation = true;
+
+
+  c_power = 100;
+  s_power = 100;
+  a_power = 100;
+
+  desired_s = 20.0f;
+  neighbor_d = 50.0f;
 }
 
 //RF Could be changed out with the right values, maybe yes maybe no

@@ -66,7 +66,7 @@ void setup() {
   pixelDensity(displayDensity());
   //Set frame rate
   frameRate(60);
-  
+
   flock = new Flock();
   seeking = false;
   avoiding = false;
@@ -75,7 +75,7 @@ void setup() {
     flock.addBoid(b);
   }
   cpanel = new ControlPanel(this);
-  
+
   //Set windows size to a more manageable size
   surface.setSize(800, 600);
 }
@@ -84,7 +84,7 @@ void setup() {
 void draw() {
   //Draw background
   background(background_c);
-  
+
   //Simulate flock
   flock.run();
   //Render obstacles
@@ -125,7 +125,7 @@ void mouseDragged() {
 }
 
 void mousePressed() {
-  if (mode == Mode.ADD_OBS && !creating_obstacles && mouseButton == LEFT && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height) {
+  if (mode == Mode.ADD_OBS && !creating_obstacles && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height) {
     //Start obstacle
     obstacles.startObstacle(mouseX, mouseY);
   } else  if (mode == Mode.ADD_OBS && mouseButton == LEFT && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height) {
@@ -152,6 +152,11 @@ void keyPressed() {
   //RF--RF//
   //change key to lower (case independent)
   switch (key) {
+  case ESC:
+  //println("esc pushed");
+  creating_obstacles = false;
+  key = 0;
+    break;
   case 'a':
     //seeking = !seeking;
     if (!seeking) rbtn_seeking(0);
