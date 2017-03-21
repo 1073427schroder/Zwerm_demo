@@ -300,7 +300,7 @@ class Boid {
   // or just future predicting
   // future predicting
   PVector avoidObstacle() {
-    float looking_distance = 30;
+    float looking_distance = 10*obs_scl+10;
     PVector sum = new PVector(0, 0);
     PVector more_velocity = new PVector(0, 0);
     more_velocity.set(velocity);
@@ -333,7 +333,7 @@ class Boid {
       obstacle_vector.set(0, 0);
       float dist = o.calcDistPointToLine(o.start_position, o.end_position, location, obstacle_vector);
       dist = sqrt(dist);
-      if (dist < 25) {
+      if (dist < looking_distance) {
         PVector diff = PVector.sub(location, obstacle_vector);
         diff.normalize();
         sum.set(diff);
