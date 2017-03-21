@@ -19,12 +19,12 @@ class Boid {
     velocity.setMag(0.1);
     location = new PVector(x, y);
     r = 2.0;
-    maxspeed = 3;
+    maxspeed = 2.5;
     maxforce = 0.1;
     //maxforce = 0.075;
     d = 150;
     id = getID();
-    
+
     //set up for averaging heading
     prev_rotation = new PVector[5];
     for (int i = 0; i < prev_rotation.length; i++) {
@@ -34,19 +34,21 @@ class Boid {
       prev_rotation[i] = tmp_vel;
     }
   }
-  
+
   //do all the things required to run
   void run(ArrayList<Boid> boids) {
     flock(boids);
-    update();
+    update(boids);
     borders();
     render();
   }
 
   //update location with velocity
-  void update() {
+  void update(ArrayList<Boid> boids) {
     velocity.add(acceleration);
     velocity.limit(maxspeed);
+    //slow down, bunching prevention
+    slow_down(boids);
     location.add(velocity);
     //wrap();
     acceleration.mult(0);
@@ -76,7 +78,7 @@ class Boid {
   void applyForce(PVector force) {
     acceleration.add(force);
   }
-  
+
   //applies behaviors
   void flock(ArrayList<Boid> boids) {
     PVector sep = separate(boids);
@@ -94,6 +96,7 @@ class Boid {
     avo.mult(1.0);
     obs.mult(4.0);
 
+    //sep.mult(4);
     //applyForce(sep);
     //applyForce(ali);
     //applyForce(coh);
@@ -123,7 +126,19 @@ class Boid {
       //applyForce(see);
     }
   }
-  
+
+  //prevent bunching up
+  //slow down when boids are to close
+  void slow_down (ArrayList<Boid> boids) {
+    for (Boid other : boids) {
+      float d = PVector.dist(location, other.location);
+      if ((this.id != other.id) && (d < desired_s * boid_scl * 0.25)) {
+        this.velocity.limit(maxspeed*0.3);
+        break;
+      }
+    }
+  }
+
   //separation rule
   PVector separate(ArrayList<Boid> boids) {
     if (separation) {
@@ -133,7 +148,7 @@ class Boid {
       for (Boid other : boids) {
         float d = PVector.dist(location, other.location);
 
-        if ((d >0) && (d < desired_s * boid_scl * 0.5)) {
+        if ((this.id != other.id) && (d < desired_s * boid_scl * 0.5)) {
           PVector diff = PVector.sub(location, other.location);
           diff.normalize();
           diff.div(d);
@@ -156,7 +171,7 @@ class Boid {
       return(new PVector(0, 0));
     } else     return(new PVector(0, 0));
   }
-  
+
   //seek a target
   PVector seek(PVector target) {
     PVector desired = PVector.sub(target, location);
@@ -248,7 +263,7 @@ class Boid {
     }
     return(new PVector(0, 0));
   }
-  
+
   //alignment rule
   PVector align (ArrayList<Boid> boids) {
     if (alignment) {
@@ -256,7 +271,7 @@ class Boid {
       int count = 0;
       for (Boid other : boids) {
         float d = PVector.dist(location, other.location);
-        if ((d > 0) && (d < neighbor_d  * boid_scl * 0.5)) {
+        if ((this.id != other.id) && (d < neighbor_d  * boid_scl * 0.5)) {
           sum.add(other.velocity);
           count++;
         }
@@ -273,7 +288,7 @@ class Boid {
       }
     } else return new PVector(0, 0);
   }
-  
+
   //cohesion rule
   PVector cohesion (ArrayList<Boid> boids) {
     if (cohesion) {
