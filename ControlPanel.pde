@@ -456,7 +456,7 @@ public void btn_reset() {
   avoiding = false;
   
   mode = Mode.BOIDS;
-
+  reset_ids();
 
   cpanel.sync_panel();
 }

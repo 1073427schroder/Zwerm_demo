@@ -16,7 +16,7 @@ int obs_c = #D12A2A; //175
 int boid_c = #532AD1; //255
 int eraser_c = #E000FF; //255
 
-
+int id_counter = 0;
 
 Boolean creating_obstacles = false;
 Boolean eraser_mode = false;
@@ -200,4 +200,12 @@ void keyPressed() {
   default:
     break;
   }
+}
+
+
+int getID(){
+  return id_counter++;  
+}
+void reset_ids(){
+  id_counter = 0;
 }

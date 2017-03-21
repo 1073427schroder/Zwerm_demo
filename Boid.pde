@@ -8,6 +8,7 @@ class Boid {
   float maxforce;
   float d;
   PVector[] prev_rotation;
+  int id;
 
   //constructor
   Boid(float x, float y) {
@@ -22,6 +23,7 @@ class Boid {
     maxforce = 0.1;
     //maxforce = 0.075;
     d = 150;
+    id = getID();
     
     //set up for averaging heading
     prev_rotation = new PVector[5];
@@ -279,7 +281,7 @@ class Boid {
       int count = 0;
       for (Boid other : boids) {
         float d = PVector.dist(location, other.location);
-        if ((d>0) && (d<neighbor_d  * boid_scl * 0.5)) {
+        if ((this.id != other.id) && (d<neighbor_d  * boid_scl * 0.5)) {
           sum.add(other.location);
           count++;
         }

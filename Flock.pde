@@ -21,6 +21,7 @@ class Flock {
   //clear all boids
   void clearBoids() {
     this.boids.clear();
+    reset_ids();
   }
 
   void changeColor(int c) {
