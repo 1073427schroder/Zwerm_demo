@@ -9,6 +9,9 @@ class Boid {
   float d;
   PVector[] prev_rotation;
   int id;
+  //boolean crowded;
+  int numberOfNeighborsWhenCrowded = 3;
+  float crowdedSpace = 6 * boid_scl;
 
   //constructor
   Boid(float x, float y) {
@@ -24,6 +27,7 @@ class Boid {
     //maxforce = 0.075;
     d = 150;
     id = getID();
+    //this.crowded = false;
 
     //set up for averaging heading
     prev_rotation = new PVector[5];
@@ -41,6 +45,10 @@ class Boid {
     update(boids);
     borders();
     render();
+    if (checkIfCrowded()) {
+      //println("Druk hier!");
+      collisionDanger = true;
+    }
   }
 
   //update location with velocity
@@ -48,7 +56,7 @@ class Boid {
     velocity.add(acceleration);
     velocity.limit(maxspeed);
     //slow down, bunching prevention
-    slow_down(boids);
+    //slow_down(boids);
     location.add(velocity);
     //wrap();
     acceleration.mult(0);
@@ -127,16 +135,40 @@ class Boid {
     }
   }
 
+  boolean checkIfCrowded() { 
+    boolean crowded = false;
+    int counter = 0;
+    for (Boid other : flock.getBoids()) {
+      float d = PVector.dist(location, other.location);
+      if ((this.id != other.id) && (d < this.crowdedSpace)) {
+        counter++;
+        //println("counter: " + counter);
+      }
+    }
+    if (counter > numberOfNeighborsWhenCrowded) crowded = true;
+    else crowded = false;
+    return crowded;
+  }
+
   //prevent bunching up
   //slow down when boids are to close
   void slow_down (ArrayList<Boid> boids) {
+    //int counter = 0;
+    float maximumDistance = desired_s * boid_scl * 0.25;
     for (Boid other : boids) {
       float d = PVector.dist(location, other.location);
-      if ((this.id != other.id) && (d < desired_s * boid_scl * 0.25)) {
-        this.velocity.limit(maxspeed*0.3);
+      if ((this.id != other.id) && (d < maximumDistance)) {
+        //prevent below 0 distance (no dividing by 0)
+        if (d < 1) d = 1;
+        float limiter = d / maximumDistance;
+        println("limiter: " + limiter);
+        this.velocity.limit(maxspeed*limiter);
+        //counter++;
+        //println("counter: " + counter);
         break;
       }
     }
+    //if (counter > 1)  println("times: " + counter);
   }
 
   //separation rule

@@ -423,6 +423,11 @@ class ControlPanel {
 //Clear all boids
 public void btn_clear() {
   flock.clearBoids();
+  
+  //'clear' console
+  for (int i = 0; i < 20; i++){
+    println("");
+  }
 }
 
 //Reset everything
@@ -459,6 +464,11 @@ public void btn_reset() {
   reset_ids();
 
   cpanel.sync_panel();
+  
+  //'clear' console
+  for (int i = 0; i < 20; i++){
+    println("");
+  }
 }
 
 

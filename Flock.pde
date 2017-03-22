@@ -23,6 +23,16 @@ class Flock {
     this.boids.clear();
     reset_ids();
   }
+  
+  ArrayList<Boid> getBoids(){
+    return this.boids;
+  }
+  
+  void turnFlockAround (){
+    for (Boid boid : this.boids){
+      boid.velocity.mult(-1);
+    }
+  }
 
   void changeColor(int c) {
 

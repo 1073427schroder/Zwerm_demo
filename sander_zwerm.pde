@@ -7,6 +7,10 @@ enum Mode {
 }
 Mode mode = Mode.BOIDS;
 
+boolean collisionDanger = false;
+int timestampCollisionDanger = millis();
+int numberOfTurns = 0;
+
 //values for scaling en colors
 float obs_scl = 1.0f;
 float boid_scl = 2.0f;
@@ -87,6 +91,15 @@ void draw() {
 
   //Simulate flock
   flock.run();
+
+  //test
+  if (collisionDanger && (millis() - timestampCollisionDanger) > 500) {
+    timestampCollisionDanger = millis();
+    numberOfTurns++;    
+    println("Draaien maar, nummer " + numberOfTurns);
+    flock.turnFlockAround();
+  } else collisionDanger = false;
+
   //Render obstacles
   obstacles.render();
 
@@ -153,9 +166,9 @@ void keyPressed() {
   //change key to lower (case independent)
   switch (key) {
   case ESC:
-  //println("esc pushed");
-  creating_obstacles = false;
-  key = 0;
+    //println("esc pushed");
+    creating_obstacles = false;
+    key = 0;
     break;
   case 'a':
     //seeking = !seeking;
@@ -203,9 +216,9 @@ void keyPressed() {
 }
 
 
-int getID(){
-  return id_counter++;  
+int getID() {
+  return id_counter++;
 }
-void reset_ids(){
+void reset_ids() {
   id_counter = 0;
 }
