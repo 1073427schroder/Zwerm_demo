@@ -181,13 +181,12 @@ class Boid {
     boolean turnedRecently;
     if (frameCount - lastFrameTurnedAround < 60) turnedRecently = true;
     else turnedRecently = false;
-    lastFrameTurnedAround = frameCount;
     return turnedRecently;
   }
 
   void turnAround() {
-    this.velocity.mult(-1);
-    println("Turning Around");
+    this.velocity.mult(-1);    
+    lastFrameTurnedAround = frameCount;
   }
 
   void avoidCornerCollisions() {
