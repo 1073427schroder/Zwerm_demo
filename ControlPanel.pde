@@ -198,6 +198,7 @@ class ControlPanel {
       ;
 
     this.cp5.addTab("scaling");
+    this.cp5.addTab("scenario's");
 
     cp5.addSlider("boid_scl")
       .setPosition(width - this.cp_width + 20, 20)
@@ -214,7 +215,28 @@ class ControlPanel {
       .setLabel("Obstacle Scale")
       .moveTo("scaling")
       ;
-
+    
+    cp5.addButton("btnTriangle")
+      .setPosition(width - this.cp_width + 20, 60)
+      .setSize(100, 20)
+      .setLabel("Triangle")
+      .moveTo("scenario's")
+      ;
+    cp5.addButton("btnWarehouse")
+      .setPosition(width - this.cp_width + 20, 100)
+      .setSize(100, 20)
+      .setLabel("Warehouse")
+      .moveTo("scenario's")
+      ;
+    
+    
+    
+    
+    
+    
+    
+    
+    
     //cp5.addSlider("ui_scl_sl")
     //  .setPosition(width - this.cp_width + 20, 100)
     //  .setValue(ui_scl)
@@ -320,6 +342,14 @@ class ControlPanel {
 
     cp5.getController("obs_scl")
       .setPosition(width - this.cp_width + 20, 60);
+      
+      
+    cp5.getController("btnTriangle")
+      .setPosition(width - this.cp_width + 20, 20)
+      ;
+    cp5.getController("btnWarehouse")
+      .setPosition(width - this.cp_width + 20, 50)
+      ;
 
 
     //cp5.getController("ui_scl_sl")
@@ -521,6 +551,19 @@ void toggle_a() {
 void c(int c) {
   flock.changeColor(c);
   boid_c = c;
+}
+
+void btnTriangle(){
+  btn_reset();
+  obstacles.start_p.set((width-cpanel.cp_width)*0.5,height*0.1);
+  obstacles.end_p.set((width-cpanel.cp_width)*0.9,height*0.9);
+  obstacles.addObstacle();
+  obstacles.start_p.set((width-cpanel.cp_width)*0.9,height*0.9);
+  obstacles.end_p.set((width-cpanel.cp_width)*0.1,height*0.9);
+  obstacles.addObstacle();
+  obstacles.start_p.set((width-cpanel.cp_width)*0.1,height*0.9);
+  obstacles.end_p.set((width-cpanel.cp_width)*0.5,height*0.1);
+  obstacles.addObstacle();
 }
 
 //void ui_scl_sl(float scl) {
