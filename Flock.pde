@@ -30,7 +30,7 @@ class Flock {
   
   void turnFlockAround (){
     for (Boid boid : this.boids){
-      boid.velocity.mult(-1);
+      boid.turnAround();
     }
   }
 

@@ -11,7 +11,10 @@ class Boid {
   int id;
   //boolean crowded;
   int numberOfNeighborsWhenCrowded = 3;
-  float crowdedSpace = 6 * boid_scl;
+  float crowdedSpace = 7 * boid_scl;
+  int lastFrameTurnedAround = frameCount;
+  boolean talkedThisFrame = false;
+  int overrideTurnAroundAnimationCounter = 0;
 
   //constructor
   Boid(float x, float y) {
@@ -42,13 +45,18 @@ class Boid {
   //do all the things required to run
   void run(ArrayList<Boid> boids) {
     flock(boids);
+    //test
+    avoidCornerCollisions();
     update(boids);
     borders();
     render();
-    if (checkIfCrowded()) {
-      //println("Druk hier!");
-      collisionDanger = true;
-    }
+    //checkIfCrowded();
+    //if (checkIfCrowded()) {
+    //  //println("Druk hier!");
+    //  collisionDanger = true;
+    //}
+
+    //talkedThisFrame = false;
   }
 
   //update location with velocity
@@ -145,14 +153,59 @@ class Boid {
         //println("counter: " + counter);
       }
     }
-    if (counter > numberOfNeighborsWhenCrowded) crowded = true;
-    else crowded = false;
+    if (counter > numberOfNeighborsWhenCrowded) {
+      crowded = true;
+    } else crowded = false;
     return crowded;
+  }
+
+  boolean hasTalkedRecently() {
+    return this.talkedThisFrame;
+  }
+
+  void tellNeighborsToTurnAround() {
+    //talkedThisFrame = true;
+    float maximumDistance = neighbor_d * boid_scl*2.5;
+    for (Boid other : flock.getBoids()) {
+      float distance = PVector.dist(location, other.location);
+      if (this.id != other.id && distance < maximumDistance) other.turnAround();
+      
+      //float d = PVector.dist(location, other.location);
+      //if ((this.id != other.id) && (d < maximumDistance)) {
+      //  other.turnAround();
+      //}
+    }
+  }
+
+  boolean hasTurnedRecently() {
+    boolean turnedRecently;
+    if (frameCount - lastFrameTurnedAround < 60) turnedRecently = true;
+    else turnedRecently = false;
+    lastFrameTurnedAround = frameCount;
+    return turnedRecently;
+  }
+
+  void turnAround() {
+    this.velocity.mult(-1);
+    println("Turning Around");
+  }
+
+  void avoidCornerCollisions() {
+    if (checkIfCrowded()) {
+      if (!hasTurnedRecently()) {
+        turnAround();
+        if (!talkedThisFrame) {
+          tellNeighborsToTurnAround();
+          talkedThisFrame = true;
+        }
+      }
+    }
   }
 
   //prevent bunching up
   //slow down when boids are to close
-  void slow_down (ArrayList<Boid> boids) {
+  void slow_down () {
+    ArrayList<Boid> boids = flock.getBoids();
     //int counter = 0;
     float maximumDistance = desired_s * boid_scl * 0.25;
     for (Boid other : boids) {
@@ -165,7 +218,7 @@ class Boid {
         this.velocity.limit(maxspeed*limiter);
         //counter++;
         //println("counter: " + counter);
-        break;
+        //break;
       }
     }
     //if (counter > 1)  println("times: " + counter);

@@ -86,19 +86,23 @@ void setup() {
 
 //Draw code, keeps looping
 void draw() {
+  ////setTalkedToTrue
+  //for (Boid o : flock.getBoids()) {
+  //  o.talkedThisFrame=false;
+  //}
   //Draw background
   background(background_c);
 
   //Simulate flock
   flock.run();
 
-  //test
-  if (collisionDanger && (millis() - timestampCollisionDanger) > 500) {
-    timestampCollisionDanger = millis();
-    numberOfTurns++;    
-    println("Draaien maar, nummer " + numberOfTurns);
-    flock.turnFlockAround();
-  } else collisionDanger = false;
+  ////test
+  //if (collisionDanger && (millis() - timestampCollisionDanger) > 500) {
+  //  timestampCollisionDanger = millis();
+  //  numberOfTurns++;    
+  //  println("Draaien maar, nummer " + numberOfTurns);
+  //  flock.turnFlockAround();
+  //} else collisionDanger = false;
 
   //Render obstacles
   obstacles.render();
@@ -124,6 +128,11 @@ void draw() {
 
   //Draw the control panel
   cpanel.render();
+
+  //setTalkedToFalse
+  for (Boid o : flock.getBoids()) {
+    o.talkedThisFrame=false;
+  }
 }
 
 
