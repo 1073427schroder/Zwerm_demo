@@ -228,6 +228,12 @@ class ControlPanel {
       .setLabel("Warehouse")
       .moveTo("scenario's")
       ;
+    cp5.addButton("btnOctagon")
+      .setPosition(width - this.cp_width + 20, 140)
+      .setSize(100, 20)
+      .setLabel("Octagon")
+      .moveTo("scenario's")
+      ;
 
 
 
@@ -350,6 +356,10 @@ class ControlPanel {
     cp5.getController("btnWarehouse")
       .setPosition(width - this.cp_width + 20, 50)
       ;
+      
+      
+    cp5.getController("btnOctagon")
+      .setPosition(width - this.cp_width + 20, 80);
 
 
     //cp5.getController("ui_scl_sl")
@@ -629,9 +639,39 @@ void btnWarehouse() {
   obstacles.start_p.set(obstacles.end_p);
   obstacles.end_p.set((width-cpanel.cp_width)*0.1, height*0.8);
   obstacles.addObstacle();
+}
+
+void btnOctagon(){
+  btn_reset();
   
+  //octagan  
+  obstacles.start_p.set((width-cpanel.cp_width)*0.35, height*0.05);
+  obstacles.end_p.set((width-cpanel.cp_width)*0.65, height*0.05);
+  obstacles.addObstacle();
+  obstacles.start_p.set(obstacles.end_p);
+  obstacles.end_p.set((width-cpanel.cp_width)*0.95, height*0.35);
+  obstacles.addObstacle();
+  obstacles.start_p.set(obstacles.end_p);
+  obstacles.end_p.set((width-cpanel.cp_width)*0.95, height*0.65);
+  obstacles.addObstacle();
+  obstacles.start_p.set(obstacles.end_p);
+  obstacles.end_p.set((width-cpanel.cp_width)*0.65, height*0.95);
+  obstacles.addObstacle();
+  obstacles.start_p.set(obstacles.end_p);
+  obstacles.end_p.set((width-cpanel.cp_width)*0.35, height*0.95);
+  obstacles.addObstacle();
+  obstacles.start_p.set(obstacles.end_p);
+  obstacles.end_p.set((width-cpanel.cp_width)*0.05, height*0.65);
+  obstacles.addObstacle();
+  obstacles.start_p.set(obstacles.end_p);
+  obstacles.end_p.set((width-cpanel.cp_width)*0.05, height*0.35);
+  obstacles.addObstacle();
+  obstacles.start_p.set(obstacles.end_p);
+  obstacles.end_p.set((width-cpanel.cp_width)*0.35, height*0.05);
+  obstacles.addObstacle();
   
 }
+
 
 //void ui_scl_sl(float scl) {
 //  ui_scl = scl;
