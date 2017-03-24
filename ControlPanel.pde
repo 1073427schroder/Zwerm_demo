@@ -234,6 +234,12 @@ class ControlPanel {
       .setLabel("Octagon")
       .moveTo("scenario's")
       ;
+      
+      cp5.addButton("btnTurnAround")
+      .setPosition(width - this.cp_width + 20, 360)
+      .setSize(100, 20)
+      .setLabel("TurnAround")
+      ;
 
 
 
@@ -356,6 +362,10 @@ class ControlPanel {
     cp5.getController("btnWarehouse")
       .setPosition(width - this.cp_width + 20, 50)
       ;
+      
+      
+      cp5.getController("btnTurnAround")
+      .setPosition(width - this.cp_width + 20, 380);
       
       
     cp5.getController("btnOctagon")
@@ -670,6 +680,10 @@ void btnOctagon(){
   obstacles.end_p.set((width-cpanel.cp_width)*0.35, height*0.05);
   obstacles.addObstacle();
   
+}
+
+void btnTurnAround(){
+  flock.turnFlockAround();
 }
 
 

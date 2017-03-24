@@ -10,11 +10,16 @@ class Boid {
   PVector[] prev_rotation;
   int id;
   //boolean crowded;
-  int numberOfNeighborsWhenCrowded = 3;
-  float crowdedSpace = 7 * boid_scl;
+  static final int numberOfNeighborsWhenCrowded = 3;
+  //float crowdedSpace = desired_s;
+  float crowdedSpace = 8 * boid_scl;
   int lastFrameTurnedAround = frameCount;
   boolean talkedThisFrame = false;
-  int overrideTurnAroundAnimationCounter = 0;
+  int turnAroundAnimationCounter = 0;
+  PVector tmp_heading = new PVector(0, 0);
+  static final int TURN_AROUND_LENGTH = 20;
+  static final int TURN_AROUND_RESET_TIME = 60;
+  float stepDown;
 
   //constructor
   Boid(float x, float y) {
@@ -44,9 +49,21 @@ class Boid {
 
   //do all the things required to run
   void run(ArrayList<Boid> boids) {
-    flock(boids);
-    //test
-    avoidCornerCollisions();
+    if (turnAroundAnimationCounter <= 0) {
+      flock(boids);
+      //test
+      avoidCornerCollisions();
+    } else if ( turnAroundAnimationCounter > floor(TURN_AROUND_LENGTH * 0.5)) {
+      slow_down();
+      turnAroundAnimationCounter--;
+    } else if (turnAroundAnimationCounter == floor(TURN_AROUND_LENGTH*0.5)) {
+      change_heading();      
+      turnAroundAnimationCounter--;
+    } else if (turnAroundAnimationCounter > 0) {
+      speed_up();      
+      turnAroundAnimationCounter--;
+      if (turnAroundAnimationCounter == 1) lastFrameTurnedAround = frameCount;
+    }
     update(boids);
     borders();
     render();
@@ -169,7 +186,7 @@ class Boid {
     for (Boid other : flock.getBoids()) {
       float distance = PVector.dist(location, other.location);
       if (this.id != other.id && distance < maximumDistance) other.turnAround();
-      
+
       //float d = PVector.dist(location, other.location);
       //if ((this.id != other.id) && (d < maximumDistance)) {
       //  other.turnAround();
@@ -185,9 +202,18 @@ class Boid {
   }
 
   void turnAround() {
-    this.velocity.mult(-1);    
-    lastFrameTurnedAround = frameCount;
+    turnAroundAnimationCounter = TURN_AROUND_LENGTH;
+    projected_heading();
+    calculateStepDown();
+    //this.velocity.mult(-1);    
+    //lastFrameTurnedAround = frameCount;
   }
+
+  ////without animation
+  //void turnAround() {
+  //  this.velocity.mult(-1);    
+  //  lastFrameTurnedAround = frameCount;
+  //}
 
   void avoidCornerCollisions() {
     if (checkIfCrowded()) {
@@ -201,27 +227,60 @@ class Boid {
     }
   }
 
-  //prevent bunching up
-  //slow down when boids are to close
-  void slow_down () {
-    ArrayList<Boid> boids = flock.getBoids();
-    //int counter = 0;
-    float maximumDistance = desired_s * boid_scl * 0.25;
-    for (Boid other : boids) {
-      float d = PVector.dist(location, other.location);
-      if ((this.id != other.id) && (d < maximumDistance)) {
-        //prevent below 0 distance (no dividing by 0)
-        if (d < 1) d = 1;
-        float limiter = d / maximumDistance;
-        println("limiter: " + limiter);
-        this.velocity.limit(maxspeed*limiter);
-        //counter++;
-        //println("counter: " + counter);
-        //break;
-      }
-    }
-    //if (counter > 1)  println("times: " + counter);
+  void calculateStepDown() {
+    this.stepDown = this.velocity.mag() / (floor(TURN_AROUND_LENGTH/2));
+    println("Stepdown = " + this.stepDown);
   }
+
+  void slow_down() {
+    this.velocity.limit(maxspeed);
+    //this.velocity.mult(0.95);    
+    this.velocity.setMag(this.velocity.mag()-this.stepDown);
+    println("Slowing down, velocity: " + this.velocity.mag());
+  }
+
+  void projected_heading() {
+    //println("Velocity before: " + this.velocity);
+    tmp_heading.set(this.velocity);
+    tmp_heading.mult(-1);
+    //println("Velocity after: " + this.velocity);
+    //println("Heading after: " + this.tmp_heading);
+  }
+
+  void change_heading() {
+    tmp_heading.setMag(this.velocity.mag());
+    this.velocity.set(tmp_heading);
+  }
+
+  void speed_up() {    
+    this.velocity.setMag(this.velocity.mag()+this.stepDown);
+    println("Speeding up, velocity: " + this.velocity.mag());
+
+    //this.velocity.mult(1.05);
+    this.velocity.limit(maxspeed);
+  }
+
+  ////prevent bunching up
+  ////slow down when boids are to close
+  //void slow_down () {
+  //  ArrayList<Boid> boids = flock.getBoids();
+  //  //int counter = 0;
+  //  float maximumDistance = desired_s * boid_scl * 0.25;
+  //  for (Boid other : boids) {
+  //    float d = PVector.dist(location, other.location);
+  //    if ((this.id != other.id) && (d < maximumDistance)) {
+  //      //prevent below 0 distance (no dividing by 0)
+  //      if (d < 1) d = 1;
+  //      float limiter = d / maximumDistance;
+  //      println("limiter: " + limiter);
+  //      this.velocity.limit(maxspeed*limiter);
+  //      //counter++;
+  //      //println("counter: " + counter);
+  //      //break;
+  //    }
+  //  }
+  //  //if (counter > 1)  println("times: " + counter);
+  //}
 
   //separation rule
   PVector separate(ArrayList<Boid> boids) {
