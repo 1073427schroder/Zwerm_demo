@@ -229,14 +229,14 @@ class Boid {
 
   void calculateStepDown() {
     this.stepDown = this.velocity.mag() / (floor(TURN_AROUND_LENGTH/2));
-    println("Stepdown = " + this.stepDown);
+    //println("Stepdown = " + this.stepDown);
   }
 
   void slow_down() {
     this.velocity.limit(maxspeed);
     //this.velocity.mult(0.95);    
     this.velocity.setMag(this.velocity.mag()-this.stepDown);
-    println("Slowing down, velocity: " + this.velocity.mag());
+    //println("Slowing down, velocity: " + this.velocity.mag());
   }
 
   void projected_heading() {
@@ -254,7 +254,7 @@ class Boid {
 
   void speed_up() {    
     this.velocity.setMag(this.velocity.mag()+this.stepDown);
-    println("Speeding up, velocity: " + this.velocity.mag());
+    //println("Speeding up, velocity: " + this.velocity.mag());
 
     //this.velocity.mult(1.05);
     this.velocity.limit(maxspeed);
