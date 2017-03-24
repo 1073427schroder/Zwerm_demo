@@ -18,7 +18,7 @@ class Boid {
   int turnAroundAnimationCounter = 0;
   PVector tmp_heading = new PVector(0, 0);
   static final int TURN_AROUND_LENGTH = 20;
-  static final int TURN_AROUND_RESET_TIME = 60;
+  static final int TURN_AROUND_RESET_TIME = 300;
   float stepDown;
 
   //constructor
@@ -125,7 +125,7 @@ class Boid {
     sep.mult(s_power*0.02);
     ali.mult(a_power*0.01);
     coh.mult(c_power*0.01);
-    see.mult(1.0);
+    see.mult(0.5);
     avo.mult(1.0);
     obs.mult(4.0);
 
