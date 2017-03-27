@@ -27,7 +27,7 @@ class Boid {
     acceleration = new PVector(0, 0);
     velocity = new PVector(random(-2, 2), random(-2, 2));
     //velocity.setMag(random(3,4));
-    velocity.setMag(0.1);
+    velocity.setMag(0.5);
     location = new PVector(x, y);
     r = 2.0;
     maxspeed = 2.5;
