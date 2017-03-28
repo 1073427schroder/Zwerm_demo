@@ -40,19 +40,41 @@ Boolean seeking;
 Boolean avoiding;
 ControlPanel cpanel;
 
-//List of all boids
+//Keeps track of the boids
 Flock flock;
 
-//List of all obstacles
+//Keeps track of the obstacles
 Obstacles obstacles;
 
-//Setup code
+//Setup code, ran only once
 void setup() {
+  //Set size to max size, otherwise the 
+  //ControlP5 buttons stop working
+  size(displayWidth, displayHeight);
+
+  createObjects();
+  setStartValues();
+
+  //Create panel with max size, otherwise the
+  //ControlP5 buttons stop working
+  cpanel = new ControlPanel(this);
+
+  //Setup rest of window
+  setupWindow();
+}
+
+void createObjects() {  
   obstacles = new Obstacles();
+  flock = new Flock();
+}
+
+void setStartValues() {
   alignment = true;
   cohesion = true;
   separation = true;
 
+  seeking = false;
+  avoiding = false;
 
   c_power = 100;
   s_power = 100;
@@ -60,123 +82,101 @@ void setup() {
 
   desired_s = 20.0f;
   neighbor_d = 50.0f;
+}
 
+void setupWindow() {
   //Window resizable
   surface.setResizable(true);
-  //Set size to max size, otherwise the 
-  //ControlP5 buttons stop working
-  size(displayWidth, displayHeight);
   //Check for highresolution screens
   pixelDensity(displayDensity());
   //Set frame rate
   frameRate(60);
-
-  flock = new Flock();
-  seeking = false;
-  avoiding = false;
-  for (int i = 0; i < 0; i++) {
-    Boid b = new Boid(width/2, height/2);
-    flock.addBoid(b);
-  }
-  cpanel = new ControlPanel(this);
-
   //Set windows size to a more manageable size
   surface.setSize(800, 600);
 }
 
+
 //Draw code, keeps looping
 void draw() {
-  ////setTalkedToTrue
-  //for (Boid o : flock.getBoids()) {
-  //  o.talkedThisFrame=false;
-  //}
   //Draw background
   background(background_c);
 
   //Simulate flock
   flock.run();
 
-  ////test
-  //if (collisionDanger && (millis() - timestampCollisionDanger) > 500) {
-  //  timestampCollisionDanger = millis();
-  //  numberOfTurns++;    
-  //  println("Draaien maar, nummer " + numberOfTurns);
-  //  flock.turnFlockAround();
-  //} else collisionDanger = false;
-
   //Render obstacles
   obstacles.render();
 
-  //Add blobs to cursor in certain modes
-  //RF--RF//
-  //Separate function?
-  if (mode == Mode.ADD_OBS) {
+  //Add blobs and line to cursor in certain modes
+  drawCursorBlobAndLine();
+
+  //Draw the control panel
+  cpanel.render();
+}
+
+//Add blobs and line to cursor in certain modes
+void drawCursorBlobAndLine() {
+  if (mode == Mode.ADD_OBS) {           //draw obstacle blob at cursor
     stroke(obs_c);
     strokeWeight(20*obs_scl);
     point(mouseX, mouseY);
-  } else if (mode == Mode.ERASE_OBS) {
+  } else if (mode == Mode.ERASE_OBS) {  //draw eraser blob at cursor
     stroke(eraser_c);
     strokeWeight(20*obs_scl);
     point(mouseX, mouseY);
   }
-  if (creating_obstacles) {
+  if (creating_obstacles) {             //draw line from obstacle to cursor
     stroke(obs_c);
     strokeWeight(20*obs_scl);
     line(obstacles.start_p.x, obstacles.start_p.y, mouseX, mouseY);
   }
-  //END--RF//
-
-  //Draw the control panel
-  cpanel.render();
-
-  //setTalkedToFalse
-  for (Boid o : flock.getBoids()) {
-    o.talkedThisFrame=false;
-  }
 }
 
-
 void mouseDragged() {
-  if (mode == Mode.BOIDS && mouseButton == RIGHT && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height) {
-    //Add boids
+  if (canAddBoids() && mouseButton == RIGHT) {
     flock.addBoid(new Boid(mouseX, mouseY));
-  } else if (mode == Mode.ERASE_OBS && mouseButton == LEFT && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height) {
-    //Erase obstacles
+  } else if (canErase()) {
     obstacles.eraseObstacle(mouseX, mouseY);
   }
 }
 
 void mousePressed() {
-  if (mode == Mode.ADD_OBS && !creating_obstacles && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height) {
-    //Start obstacle
+  if (canAddObstacles() && !creating_obstacles) {
     obstacles.startObstacle(mouseX, mouseY);
-  } else  if (mode == Mode.ADD_OBS && mouseButton == LEFT && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height) {
-    //End obstacle
+  } else  if (canAddObstacles() && mouseButton == LEFT) {
     obstacles.endObstacle(mouseX, mouseY);
-  } else  if (mode == Mode.ADD_OBS && creating_obstacles && mouseButton == RIGHT && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height) {
-    //Continue obstacle
-    obstacles.endObstacle(mouseX, mouseY);
-    obstacles.startObstacle(mouseX, mouseY);
+  } else  if (canAddObstacles() && creating_obstacles && mouseButton == RIGHT) {
+    obstacles.continueObstacle(mouseX, mouseY);
   }
-  if (mode == Mode.ERASE_OBS) {
-    //Erase obstacle
+
+  if (canErase()) {
     obstacles.eraseObstacle(mouseX, mouseY);
   }
 
-  if (mode == Mode.BOIDS && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height) {
-    //Add boid
+  if (canAddBoids()) {
     flock.addBoid(new Boid(mouseX, mouseY));
   }
 }
 
+boolean canAddBoids() {
+  return (mode == Mode.BOIDS && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height);
+}
+
+boolean canErase() {
+  return (mode == Mode.ERASE_OBS && mouseButton == LEFT && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height);
+}
+
+boolean canAddObstacles() {
+  return (mode == Mode.ADD_OBS && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height);
+}
+
 //Keyboard shortcuts
 void keyPressed() {
-  //RF--RF//
-  //change key to lower (case independent)
+  key = Character.toLowerCase(key);  //keyboard shortcuts case insensitive
   switch (key) {
   case ESC:
-    //println("esc pushed");
     creating_obstacles = false;
+    //escape the escape key, prevent close down
     key = 0;
     break;
   case 'a':

@@ -40,6 +40,11 @@ class Obstacles {
     this.addObstacle();
   }
   
+  void continueObstacle(int x, int y){    
+    this.endObstacle(x, y);
+    this.startObstacle(x, y);
+  }
+  
   //delete obstacle
   void eraseObstacle(int x, int y) {
     for (int i = obstacles.size() - 1; i >= 0; i--) {
