@@ -22,7 +22,7 @@ int eraser_c = #E000FF; //255
 
 int id_counter = 0;
 
-Boolean creating_obstacles = false;
+//Boolean creatingObstacles = false;
 Boolean eraser_mode = false;
 
 Boolean separation;
@@ -125,10 +125,10 @@ void drawCursorBlobAndLine() {
     strokeWeight(20*obs_scl);
     point(mouseX, mouseY);
   }
-  if (creating_obstacles) {             //draw line from obstacle to cursor
+  if (obstacles.creatingObstacles) {             //draw line from obstacle to cursor
     stroke(obs_c);
     strokeWeight(20*obs_scl);
-    line(obstacles.start_p.x, obstacles.start_p.y, mouseX, mouseY);
+    line(obstacles.startPosition.x, obstacles.startPosition.y, mouseX, mouseY);
   }
 }
 
@@ -141,11 +141,11 @@ void mouseDragged() {
 }
 
 void mousePressed() {
-  if (canAddObstacles() && !creating_obstacles) {
+  if (canAddObstacles() && !obstacles.creatingObstacles) {
     obstacles.startObstacle(mouseX, mouseY);
   } else  if (canAddObstacles() && mouseButton == LEFT) {
     obstacles.endObstacle(mouseX, mouseY);
-  } else  if (canAddObstacles() && creating_obstacles && mouseButton == RIGHT) {
+  } else  if (canAddObstacles() && obstacles.creatingObstacles && mouseButton == RIGHT) {
     obstacles.continueObstacle(mouseX, mouseY);
   }
 
@@ -175,7 +175,7 @@ void keyPressed() {
   key = Character.toLowerCase(key);  //keyboard shortcuts case insensitive
   switch (key) {
   case ESC:
-    creating_obstacles = false;
+    obstacles.creatingObstacles = false;
     //escape the escape key, prevent close down
     key = 0;
     break;
@@ -202,10 +202,10 @@ void keyPressed() {
     cpanel.toggleShow();
     break;
   case 'k':
-    obstacles.empty();
+    obstacles.clear();
     break;
   case 'e':
-    creating_obstacles = false;
+    obstacles.creatingObstacles = false;
     rbtn_mode(2);
     //if (mode != Mode.ERASE_OBS) mode = Mode.ERASE_OBS;
     //eraser_mode = !eraser_mode;

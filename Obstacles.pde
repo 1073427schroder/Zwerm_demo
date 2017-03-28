@@ -1,57 +1,52 @@
 class Obstacles {
   ArrayList<Obstacle> obstacles;
-  PVector start_p;
-  PVector end_p;
-  
-  //constructor
+  PVector startPosition;
+  PVector endPosition;
+  boolean creatingObstacles;
+
   Obstacles() {
     this.obstacles = new ArrayList<Obstacle>();
-    start_p = new PVector(0, 0);
-    end_p = new PVector(0, 0);
-  }
-   
-  //add obstactle
-  void addObstacle() {
-    this.obstacles.add(new Obstacle(start_p, end_p));
-    creating_obstacles = false;
+    this.startPosition = new PVector(0, 0);
+    this.endPosition = new PVector(0, 0);
+    this.creatingObstacles = false;
   }
 
-  //draw all obstacles
   void render() {
     for (Obstacle o : this.obstacles) {
       o.drawObstacle();
     }
   }
 
-  //clear all obstacles
-  void empty() {
-    this.obstacles.clear();
+  void addObstacle() {
+    this.obstacles.add(new Obstacle(this.startPosition, this.endPosition));
+    this.creatingObstacles = false;
   }
 
-  //start obstacle
   void startObstacle(int x, int y) {
-    start_p.set(x, y);
-    creating_obstacles = true;
+    this.startPosition.set(x, y);
+    this.creatingObstacles = true;
   }
-  
-  //end obstacle
+
   void endObstacle(int x, int y) {
-    end_p.set(x, y);
+    this.endPosition.set(x, y);
     this.addObstacle();
   }
-  
-  void continueObstacle(int x, int y){    
+
+  void continueObstacle(int x, int y) {    
     this.endObstacle(x, y);
     this.startObstacle(x, y);
   }
-  
-  //delete obstacle
+
   void eraseObstacle(int x, int y) {
-    for (int i = obstacles.size() - 1; i >= 0; i--) {
-      Obstacle o = obstacles.get(i);
+    for (int i = this.obstacles.size() - 1; i >= 0; i--) {
+      Obstacle o = this.obstacles.get(i);
       if (o.intersectsPoint(x, y)) {
-        obstacles.remove(i);
+        this.obstacles.remove(i);
       }
     }
+  }
+
+  void empty() {
+    this.obstacles.clear();
   }
 }

@@ -345,7 +345,7 @@ public void btn_clear() {
 //Reset everything
 public void btn_reset() {
   flock.clearBoids();
-  obstacles.empty();
+  obstacles.clear();
   obs_scl = 1.0f;
   boid_scl = 2.0f;
   ui_scl = 1.0f;
@@ -353,7 +353,7 @@ public void btn_reset() {
   obs_c = #D12A2A; //175
   boid_c = #532AD1; //255
   eraser_c = #E000FF; //255
-  creating_obstacles = false;
+  obstacles.creatingObstacles = false;
   eraser_mode = false;
 
   alignment = true;
@@ -406,14 +406,14 @@ public void rbtn_seeking(int mode) {
 public void rbtn_mode(int state) {
   switch (state) {
   case 0: 
-    creating_obstacles = false;
+    obstacles.creatingObstacles = false;
     mode = Mode.BOIDS;
     break;
   case 1:
     mode = Mode.ADD_OBS;
     break;
   case 2:  
-    creating_obstacles = false;
+    obstacles.creatingObstacles = false;
     mode = Mode.ERASE_OBS;
     break;
   default:
@@ -438,79 +438,79 @@ void c(int c) {
 
 void btnTriangle() {
   btn_reset();
-  obstacles.start_p.set((width-cpanel.cpWidth)*0.5, height*0.1);
-  obstacles.end_p.set((width-cpanel.cpWidth)*0.9, height*0.9);
+  obstacles.startPosition.set((width-cpanel.cpWidth)*0.5, height*0.1);
+  obstacles.endPosition.set((width-cpanel.cpWidth)*0.9, height*0.9);
   obstacles.addObstacle();
-  obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cpWidth)*0.1, height*0.9);
+  obstacles.startPosition.set(obstacles.endPosition);
+  obstacles.endPosition.set((width-cpanel.cpWidth)*0.1, height*0.9);
   obstacles.addObstacle();
-  obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cpWidth)*0.5, height*0.1);
+  obstacles.startPosition.set(obstacles.endPosition);
+  obstacles.endPosition.set((width-cpanel.cpWidth)*0.5, height*0.1);
   obstacles.addObstacle();
 }
 
 void btnWarehouse() {
   btn_reset(); 
   //house
-  obstacles.start_p.set((width-cpanel.cpWidth)*0.6, height*0.2);
-  obstacles.end_p.set((width-cpanel.cpWidth)*0.9, height*0.2);
+  obstacles.startPosition.set((width-cpanel.cpWidth)*0.6, height*0.2);
+  obstacles.endPosition.set((width-cpanel.cpWidth)*0.9, height*0.2);
   obstacles.addObstacle();
-  obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cpWidth)*0.9, height*0.5);
+  obstacles.startPosition.set(obstacles.endPosition);
+  obstacles.endPosition.set((width-cpanel.cpWidth)*0.9, height*0.5);
   obstacles.addObstacle();
-  obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cpWidth)*0.82, height*0.5);
+  obstacles.startPosition.set(obstacles.endPosition);
+  obstacles.endPosition.set((width-cpanel.cpWidth)*0.82, height*0.5);
   obstacles.addObstacle();
-  obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cpWidth)*0.82, height*0.3);
+  obstacles.startPosition.set(obstacles.endPosition);
+  obstacles.endPosition.set((width-cpanel.cpWidth)*0.82, height*0.3);
   obstacles.addObstacle();
-  obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cpWidth)*0.6, height*0.3);
+  obstacles.startPosition.set(obstacles.endPosition);
+  obstacles.endPosition.set((width-cpanel.cpWidth)*0.6, height*0.3);
   obstacles.addObstacle();
-  obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cpWidth)*0.6, height*0.2);
+  obstacles.startPosition.set(obstacles.endPosition);
+  obstacles.endPosition.set((width-cpanel.cpWidth)*0.6, height*0.2);
   obstacles.addObstacle();
 
   //rack 1
-  obstacles.start_p.set((width-cpanel.cpWidth)*0.1, height*0.2);
-  obstacles.end_p.set((width-cpanel.cpWidth)*0.4, height*0.2);
+  obstacles.startPosition.set((width-cpanel.cpWidth)*0.1, height*0.2);
+  obstacles.endPosition.set((width-cpanel.cpWidth)*0.4, height*0.2);
   obstacles.addObstacle();
-  obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cpWidth)*0.4, height*0.3);
+  obstacles.startPosition.set(obstacles.endPosition);
+  obstacles.endPosition.set((width-cpanel.cpWidth)*0.4, height*0.3);
   obstacles.addObstacle();
-  obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cpWidth)*0.1, height*0.3);
+  obstacles.startPosition.set(obstacles.endPosition);
+  obstacles.endPosition.set((width-cpanel.cpWidth)*0.1, height*0.3);
   obstacles.addObstacle();
-  obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cpWidth)*0.1, height*0.2);
+  obstacles.startPosition.set(obstacles.endPosition);
+  obstacles.endPosition.set((width-cpanel.cpWidth)*0.1, height*0.2);
   obstacles.addObstacle();  
 
   //rack 2
-  obstacles.start_p.set((width-cpanel.cpWidth)*0.1, height*0.5);
-  obstacles.end_p.set((width-cpanel.cpWidth)*0.4, height*0.5);
+  obstacles.startPosition.set((width-cpanel.cpWidth)*0.1, height*0.5);
+  obstacles.endPosition.set((width-cpanel.cpWidth)*0.4, height*0.5);
   obstacles.addObstacle();
-  obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cpWidth)*0.4, height*0.6);
+  obstacles.startPosition.set(obstacles.endPosition);
+  obstacles.endPosition.set((width-cpanel.cpWidth)*0.4, height*0.6);
   obstacles.addObstacle();
-  obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cpWidth)*0.1, height*0.6);
+  obstacles.startPosition.set(obstacles.endPosition);
+  obstacles.endPosition.set((width-cpanel.cpWidth)*0.1, height*0.6);
   obstacles.addObstacle();
-  obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cpWidth)*0.1, height*0.5);
+  obstacles.startPosition.set(obstacles.endPosition);
+  obstacles.endPosition.set((width-cpanel.cpWidth)*0.1, height*0.5);
   obstacles.addObstacle();  
 
   //rack 3
-  obstacles.start_p.set((width-cpanel.cpWidth)*0.1, height*0.8);
-  obstacles.end_p.set((width-cpanel.cpWidth)*0.4, height*0.8);
+  obstacles.startPosition.set((width-cpanel.cpWidth)*0.1, height*0.8);
+  obstacles.endPosition.set((width-cpanel.cpWidth)*0.4, height*0.8);
   obstacles.addObstacle();
-  obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cpWidth)*0.4, height*0.9);
+  obstacles.startPosition.set(obstacles.endPosition);
+  obstacles.endPosition.set((width-cpanel.cpWidth)*0.4, height*0.9);
   obstacles.addObstacle();
-  obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cpWidth)*0.1, height*0.9);
+  obstacles.startPosition.set(obstacles.endPosition);
+  obstacles.endPosition.set((width-cpanel.cpWidth)*0.1, height*0.9);
   obstacles.addObstacle();
-  obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cpWidth)*0.1, height*0.8);
+  obstacles.startPosition.set(obstacles.endPosition);
+  obstacles.endPosition.set((width-cpanel.cpWidth)*0.1, height*0.8);
   obstacles.addObstacle();
 }
 
@@ -518,29 +518,29 @@ void btnOctagon() {
   btn_reset();
 
   //octagan  
-  obstacles.start_p.set((width-cpanel.cpWidth)*0.35, height*0.05);
-  obstacles.end_p.set((width-cpanel.cpWidth)*0.65, height*0.05);
+  obstacles.startPosition.set((width-cpanel.cpWidth)*0.35, height*0.05);
+  obstacles.endPosition.set((width-cpanel.cpWidth)*0.65, height*0.05);
   obstacles.addObstacle();
-  obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cpWidth)*0.95, height*0.35);
+  obstacles.startPosition.set(obstacles.endPosition);
+  obstacles.endPosition.set((width-cpanel.cpWidth)*0.95, height*0.35);
   obstacles.addObstacle();
-  obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cpWidth)*0.95, height*0.65);
+  obstacles.startPosition.set(obstacles.endPosition);
+  obstacles.endPosition.set((width-cpanel.cpWidth)*0.95, height*0.65);
   obstacles.addObstacle();
-  obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cpWidth)*0.65, height*0.95);
+  obstacles.startPosition.set(obstacles.endPosition);
+  obstacles.endPosition.set((width-cpanel.cpWidth)*0.65, height*0.95);
   obstacles.addObstacle();
-  obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cpWidth)*0.35, height*0.95);
+  obstacles.startPosition.set(obstacles.endPosition);
+  obstacles.endPosition.set((width-cpanel.cpWidth)*0.35, height*0.95);
   obstacles.addObstacle();
-  obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cpWidth)*0.05, height*0.65);
+  obstacles.startPosition.set(obstacles.endPosition);
+  obstacles.endPosition.set((width-cpanel.cpWidth)*0.05, height*0.65);
   obstacles.addObstacle();
-  obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cpWidth)*0.05, height*0.35);
+  obstacles.startPosition.set(obstacles.endPosition);
+  obstacles.endPosition.set((width-cpanel.cpWidth)*0.05, height*0.35);
   obstacles.addObstacle();
-  obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cpWidth)*0.35, height*0.05);
+  obstacles.startPosition.set(obstacles.endPosition);
+  obstacles.endPosition.set((width-cpanel.cpWidth)*0.35, height*0.05);
   obstacles.addObstacle();
 }
 
