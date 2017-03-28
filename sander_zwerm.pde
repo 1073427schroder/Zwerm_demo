@@ -202,7 +202,7 @@ void keyPressed() {
     cpanel.toggleShow();
     break;
   case 'k':
-    obstacles.clear();
+    obstacles.empty();
     break;
   case 'e':
     obstacles.creatingObstacles = false;

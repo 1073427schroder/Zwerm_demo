@@ -345,7 +345,7 @@ public void btn_clear() {
 //Reset everything
 public void btn_reset() {
   flock.clearBoids();
-  obstacles.clear();
+  obstacles.empty();
   obs_scl = 1.0f;
   boid_scl = 2.0f;
   ui_scl = 1.0f;
