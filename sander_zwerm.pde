@@ -223,11 +223,3 @@ void keyPressed() {
     break;
   }
 }
-
-
-//int getID() {
-//  return id_counter++;
-//}
-//void reset_ids() {
-//  id_counter = 0;
-//}

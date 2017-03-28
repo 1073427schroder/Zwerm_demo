@@ -3,7 +3,7 @@ class Boid {
   PVector velocity;
   PVector acceleration;
   PVector obstacle_vector;
-  float r;
+  float radius;
   float maxspeed;
   float maxforce;
   float d;
@@ -21,17 +21,15 @@ class Boid {
   static final int TURN_AROUND_RESET_TIME = 300;
   float stepDown;
 
-  //constructor
   Boid(float x, float y) {
-    obstacle_vector = new PVector(0, 0);
-    acceleration = new PVector(0, 0);
-    velocity = new PVector(random(-2, 2), random(-2, 2));
-    //velocity.setMag(random(3,4));
-    velocity.setMag(0.5);
-    location = new PVector(x, y);
-    r = 2.0;
-    maxspeed = 2.5;
-    maxforce = 0.1;
+    this.obstacle_vector = new PVector(0, 0);
+    this.acceleration = new PVector(0, 0);
+    this.velocity = new PVector(random(-2, 2), random(-2, 2));
+    this.velocity.setMag(0.5);
+    this.location = new PVector(x, y);
+    this.radius = 2.0;
+    this.maxspeed = 2.5;
+    this.maxforce = 0.1;
     //maxforce = 0.075;
     d = 150;
     id = flock.getID();
@@ -612,10 +610,10 @@ class Boid {
 
   // Wraparound
   void borders() {
-    if (location.x < -r) location.x += width+r-cpanel.cpWidth;
-    if (location.y < -r) location.y += height+r;
-    if (location.x > width+r-cpanel.cpWidth) location.x -= width-r-cpanel.cpWidth;
-    if (location.y > height+r) location.y -= height-r;
+    if (location.x < -radius) location.x += width+radius-cpanel.cpWidth;
+    if (location.y < -radius) location.y += height+radius;
+    if (location.x > width+radius-cpanel.cpWidth) location.x -= width-radius-cpanel.cpWidth;
+    if (location.y > height+radius) location.y -= height-radius;
   }
 
   //draw the boid
@@ -650,9 +648,9 @@ class Boid {
     translate(location.x, location.y);
     rotate(theta);
     beginShape(TRIANGLES);
-    vertex(0, -r*2*boid_scl);
-    vertex(-r*boid_scl, r*2*boid_scl);
-    vertex(r*boid_scl, r*2*boid_scl);
+    vertex(0, -radius*2*boid_scl);
+    vertex(-radius*boid_scl, radius*2*boid_scl);
+    vertex(radius*boid_scl, radius*2*boid_scl);
     endShape(CLOSE);
     popMatrix();
     //prev_rotation = theta;
