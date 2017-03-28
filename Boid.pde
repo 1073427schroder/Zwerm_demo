@@ -471,12 +471,12 @@ class Boid {
     //obstacles.checkDistance
     for (Obstacle o : obstacles.obstacles) {
       obstacle_vector.set(0, 0);
-      float dist = o.calcDistPointToLine(o.start_position, o.end_position, future_location, obstacle_vector);
+      float dist = o.calcDistPointToLine(o.startPosition, o.endPosition, future_location, obstacle_vector);
       dist = sqrt(dist);
       if (dist < looking_distance) {
         future_location.add(more_velocity.mult(20));
-        if (o.start_position.dist(future_location) > o.end_position.dist(future_location)) obstacle_vector.set(o.start_position);
-        else obstacle_vector.set(o.end_position);
+        if (o.startPosition.dist(future_location) > o.endPosition.dist(future_location)) obstacle_vector.set(o.startPosition);
+        else obstacle_vector.set(o.endPosition);
         //obstacle_vector.set(o.end_position);
         PVector diff = PVector.sub(location, obstacle_vector);
         diff.normalize();
@@ -491,7 +491,7 @@ class Boid {
     //overide when current loc is to close
     for (Obstacle o : obstacles.obstacles) {
       obstacle_vector.set(0, 0);
-      float dist = o.calcDistPointToLine(o.start_position, o.end_position, location, obstacle_vector);
+      float dist = o.calcDistPointToLine(o.startPosition, o.endPosition, location, obstacle_vector);
       dist = sqrt(dist);
       if (dist < looking_distance) {
         PVector diff = PVector.sub(location, obstacle_vector);

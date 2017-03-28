@@ -44,6 +44,8 @@ class ControlPanel {
       if (mode == Mode.BOIDS) rbtn.activate(0);
       else if (mode == Mode.ADD_OBS) rbtn.activate(1);
       else if (mode == Mode.ERASE_OBS) rbtn.activate(2);
+      
+      drawText();
     }
   }
 

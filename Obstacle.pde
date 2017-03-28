@@ -1,31 +1,24 @@
 class Obstacle {
-  PVector start_position;
-  PVector end_position;
-  
-  //constructor
+  PVector startPosition;
+  PVector endPosition;
+
   Obstacle(PVector start, PVector end) {
-    start_position = new PVector(start.x, start.y);
-    end_position = new PVector(end.x, end.y);
+    this.startPosition = new PVector(start.x, start.y);
+    this.endPosition = new PVector(end.x, end.y);
   }
-  
-  //draw obstacle
+
   void drawObstacle() {
     stroke(obs_c);
     strokeWeight(20*obs_scl);
-    line(start_position.x, start_position.y, end_position.x, end_position.y);
-    //println("sx: " + start_position.x +" sy: "+start_position.y +" ex: "+end_position.x +" ey: "+ end_position.y);
-  }
-  
-  //is it intersecting, true or false
-  boolean intersectsPoint(int m_x, int m_y) {
-    float distance = calcDistPointToLine(start_position, end_position, new PVector(m_x,m_y), new PVector());
-    distance = sqrt(distance);
-    //println(distance);
-    if (distance < 20*obs_scl) return true;
-    else return false;
-    //return false;
+    line(this.startPosition.x, this.startPosition.y, this.endPosition.x, this.endPosition.y);
   }
 
+  boolean intersectsPoint(int pointX, int pointY) {
+    float distance = calcDistPointToLine(startPosition, endPosition, new PVector(pointX, pointY), new PVector());
+    distance = sqrt(distance);
+    if (distance < 20*obs_scl) return true;
+    else return false;
+  }
 
   //RF probably rewrite function
   // calculate the squared distance of a point P to a line segment A-B
