@@ -612,9 +612,9 @@ class Boid {
 
   // Wraparound
   void borders() {
-    if (location.x < -r) location.x += width+r-cpanel.cp_width;
+    if (location.x < -r) location.x += width+r-cpanel.cpWidth;
     if (location.y < -r) location.y += height+r;
-    if (location.x > width+r-cpanel.cp_width) location.x -= width-r-cpanel.cp_width;
+    if (location.x > width+r-cpanel.cpWidth) location.x -= width-r-cpanel.cpWidth;
     if (location.y > height+r) location.y -= height-r;
   }
 

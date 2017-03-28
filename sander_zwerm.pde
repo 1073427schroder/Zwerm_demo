@@ -159,15 +159,15 @@ void mousePressed() {
 }
 
 boolean canAddBoids() {
-  return (mode == Mode.BOIDS && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height);
+  return (mode == Mode.BOIDS && mouseX >= 0 && mouseX <= width - cpanel.cpWidth && mouseY >= 0 && mouseY <= height);
 }
 
 boolean canErase() {
-  return (mode == Mode.ERASE_OBS && mouseButton == LEFT && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height);
+  return (mode == Mode.ERASE_OBS && mouseButton == LEFT && mouseX >= 0 && mouseX <= width - cpanel.cpWidth && mouseY >= 0 && mouseY <= height);
 }
 
 boolean canAddObstacles() {
-  return (mode == Mode.ADD_OBS && mouseX >= 0 && mouseX <= width - cpanel.cp_width && mouseY >= 0 && mouseY <= height);
+  return (mode == Mode.ADD_OBS && mouseX >= 0 && mouseX <= width - cpanel.cpWidth && mouseY >= 0 && mouseY <= height);
 }
 
 //Keyboard shortcuts

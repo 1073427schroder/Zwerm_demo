@@ -43,5 +43,5 @@ class Flock {
     //    for (Boid b : this.boids) {
     //      //b.color_b = c;
     //    }
-  };
+  }
 }

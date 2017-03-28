@@ -1,96 +1,87 @@
 import controlP5.*;
 
 class ControlPanel {
-  Boolean show;
-  int cp_width;
+  Boolean showing;
+  int cpWidth;
   ControlP5 cp5;
-  int old_width;
+  int oldWindowWidth;
 
-  //constructor
   ControlPanel (PApplet thePApplet) {
-    this.show = true;
+    this.showing = true;
     this.setWidth();  
 
-    this.cp5 = new ControlP5(thePApplet);
-    ControlWindow tmp = this.cp5.getWindow();
-    tmp.setPositionOfTabs(width - this.cp_width, 0);
-
-    this.cp5.setFont(createFont("Verdana", 12));
-
+    this.cp5 = new ControlP5(thePApplet);    
+    ControlWindow window = this.cp5.getWindow();
+    window.setPositionOfTabs(width - this.cpWidth, 0);
+    this.cp5.setFont(createFont("Verdana", 12));    
     this.addControlP5Elements();
+    this.setPositionControls();
 
+    oldWindowWidth = width;
+  }
 
-    old_width = width;
+  void setWidth() {
+    this.cpWidth = 300;
   }
 
   //draw controlpanel
   void render() {
-    if (this.show) {
-      if (old_width != width) resetPositionControls();
+    if (this.showing) {
+      if (oldWindowWidth != width) setPositionControls();
       strokeWeight(1);
       fill(60);
       stroke(60);
-      rect(width - this.cp_width, 0, this.cp_width, height);
+      rect(width - this.cpWidth, 0, this.cpWidth, height);
 
-      RadioButton tmp = this.cp5.get(RadioButton.class, "rbtn_seeking");
+      RadioButton rbtn = this.cp5.get(RadioButton.class, "rbtn_seeking");
 
-      if (seeking) tmp.activate(0);
-      else if (avoiding) tmp.activate(1);
-      else tmp.activate(2);
+      if (seeking) rbtn.activate(0);
+      else if (avoiding) rbtn.activate(1);
+      else rbtn.activate(2);
 
+      rbtn = this.cp5.get(RadioButton.class, "rbtn_mode");
 
-      tmp = this.cp5.get(RadioButton.class, "rbtn_mode");
-
-      if (mode == Mode.BOIDS) tmp.activate(0);
-      else if (mode == Mode.ADD_OBS) tmp.activate(1);
-      else if (mode == Mode.ERASE_OBS) tmp.activate(2);
-
-
-
-
-      fill(255);
-      stroke(0);
-      text("Drag the mouse to generate new boids.", width - this.cp_width + 10, height-30);
-      text("Number of boids: " + flock.boids.size(), width - this.cp_width + 10, height - 20);
-      text("Framerate: " + round(frameRate), width - this.cp_width + 10, height - 10);
+      if (mode == Mode.BOIDS) rbtn.activate(0);
+      else if (mode == Mode.ADD_OBS) rbtn.activate(1);
+      else if (mode == Mode.ERASE_OBS) rbtn.activate(2);
     }
   }
 
-  //set width of control panel
-  void setWidth() {
-    this.cp_width = floor(300 * ui_scl);
+  void drawText() {
+    fill(255);
+    stroke(0);
+    text("Drag the mouse to generate new boids.", width - this.cpWidth + 10, height - 30);
+    text("Number of boids: " + flock.boids.size(), width - this.cpWidth + 10, height - 20);
+    text("Framerate: " + round(frameRate), width - this.cpWidth + 10, height - 10);
   }
 
-  //hide unhide control panel
+
+
+  //hide and unhide control panel
   void toggleShow() {
-    this.show = !this.show;
-    if (this.show) {
+    this.showing = !this.showing;
+    if (this.showing) {
       this.setWidth();
       this.render();
       this.cp5.show();
     } else {
-      this.cp_width = 0;
+      this.cpWidth = 0;
       this.cp5.hide();
     }
   }
 
   //setup controlP5 elements
-  //RF--RF//
-  //Move the positioning to other function, call other function at the end
   void addControlP5Elements() {
-
+    //Default Tab
     this.cp5.addButton("btn_clear")
-      .setPosition(width - this.cp_width + 20, 20)
       .setLabel("Clear")
       ;
 
     this.cp5.addButton("btn_reset")
-      .setPosition(width - this.cp_width + 60, 20)
       .setLabel("Reset")
       ;
 
     this.cp5.addRadioButton("rbtn_seeking")
-      .setPosition(width - this.cp_width + 20, 60)
       .setSize(20, 20)
       .setColorForeground(color(120))
       .setColorActive(color(255))
@@ -102,9 +93,7 @@ class ControlPanel {
       .addItem("Neutral", 2)
       ;
 
-
     this.cp5.addToggle("toggle_c")
-      .setPosition(width - this.cp_width + 20, 100)
       .setSize(40, 20)
       .setValue(cohesion)
       .setLabel("Cohesion")
@@ -113,7 +102,6 @@ class ControlPanel {
     cohesion = !cohesion;
 
     this.cp5.addToggle("toggle_s")
-      .setPosition(width - this.cp_width + 100, 100)
       .setSize(40, 20)
       .setValue(separation)
       .setLabel("Separation")
@@ -121,9 +109,7 @@ class ControlPanel {
     //reset first toggle
     separation = !separation;
 
-
     this.cp5.addToggle("toggle_a")
-      .setPosition(width - this.cp_width + 180, 100)
       .setSize(40, 20)
       .setValue(alignment)
       .setLabel("Alignment")
@@ -132,41 +118,36 @@ class ControlPanel {
     alignment = !alignment;
 
     this.cp5.addSlider("c_power")
-      .setPosition(width - this.cp_width + 20, 140)
       .setRange(0, 200)
       .setSize(100, 20)
       .setLabel("Cohesion power")
       ;
 
     this.cp5.addSlider("s_power")
-      .setPosition(width - this.cp_width + 20, 180)
       .setRange(0, 200)
       .setSize(100, 20)
-      .setLabel("Separation power");
-    ;
+      .setLabel("Separation power")
+      ;
 
     this.cp5.addSlider("a_power")
-      .setPosition(width - this.cp_width + 20, 220)
       .setRange(0, 200)
       .setSize(100, 20)
       .setLabel("Alignment power")
       ;
 
     this.cp5.addSlider("desired_s")
-      .setPosition(width - this.cp_width + 20, 260)
       .setRange(0, 80)
       .setSize(100, 20)
       .setLabel("Separation distance")
       ;
+
     this.cp5.addSlider("neighbor_d")
-      .setPosition(width - this.cp_width + 20, 300)
       .setRange(0, 250)
       .setSize(100, 20)
       .setLabel("Neighbor distance")
       ;
 
     this.cp5.addRadioButton("rbtn_mode")
-      .setPosition(width - this.cp_width + 20, 340)
       .setSize(20, 20)
       .setColorForeground(color(120))
       .setColorActive(color(255))
@@ -178,30 +159,28 @@ class ControlPanel {
       .addItem("Eraser", 2)
       ;
 
-    this.cp5.addTab("color")
-      //.setPosition(width - this.cp_width, 0)
-      ;
+    //Color Tab
+    this.cp5.addTab("color");
 
-
-    cp5.addColorWheel("c", width - this.cp_width + 20, 20, 200 )
+    cp5.addColorWheel("c", width - this.cpWidth + 20, 20, 200 )
       .moveTo("color")
       .setLabel("Boids Color")
       ;
-    //cp5.addColorWheel("c", width - this.cp_width + 20, 380, this.cp_width - 40 ).setRGB(color(255, 255, 255));
-    cp5.addColorWheel("background_c", width - this.cp_width + 20, 20 + this.cp_width - 20, 200  )
+
+    cp5.addColorWheel("background_c", width - this.cpWidth + 20, 20 + this.cpWidth - 20, 200  )
       .moveTo("color")
-      .setLabel("Background Color");
-    ;
-    cp5.addColorWheel("obs_c", width - this.cp_width + 20, 20 + this.cp_width*2 - 20, 200 )
+      .setLabel("Background Color")
+      ;
+
+    cp5.addColorWheel("obs_c", width - this.cpWidth + 20, 20 + this.cpWidth*2 - 20, 200 )
       .moveTo("color")
       .setLabel("Obstacle Color")
       ;
 
+    //Scaling Tab
     this.cp5.addTab("scaling");
-    this.cp5.addTab("scenario's");
 
     cp5.addSlider("boid_scl")
-      .setPosition(width - this.cp_width + 20, 20)
       .setRange(0.5, 10)
       .setSize(100, 20)
       .setLabel("Boid Scale")
@@ -209,235 +188,123 @@ class ControlPanel {
       ;
 
     cp5.addSlider("obs_scl")
-      .setPosition(width - this.cp_width + 20, 60)
       .setRange(0.5, 10)
       .setSize(100, 20)
       .setLabel("Obstacle Scale")
       .moveTo("scaling")
       ;
 
+    //Scenaria Tab
+    this.cp5.addTab("scenario's");
+
     cp5.addButton("btnTriangle")
-      .setPosition(width - this.cp_width + 20, 60)
       .setSize(100, 20)
       .setLabel("Triangle")
       .moveTo("scenario's")
       ;
+
     cp5.addButton("btnWarehouse")
-      .setPosition(width - this.cp_width + 20, 100)
       .setSize(100, 20)
       .setLabel("Warehouse")
       .moveTo("scenario's")
       ;
+
     cp5.addButton("btnOctagon")
-      .setPosition(width - this.cp_width + 20, 140)
       .setSize(100, 20)
       .setLabel("Octagon")
       .moveTo("scenario's")
       ;
-      
-      cp5.addButton("btnTurnAround")
-      .setPosition(width - this.cp_width + 20, 360)
+
+    cp5.addButton("btnTurnAround")
       .setSize(100, 20)
       .setLabel("TurnAround")
       ;
-
-
-
-
-
-
-
-
-
-    //cp5.addSlider("ui_scl_sl")
-    //  .setPosition(width - this.cp_width + 20, 100)
-    //  .setValue(ui_scl)
-    //  .setRange(0.5, 3)
-    //  .setSize(100, 20)
-    //  .setLabel("UI Scale")
-    //  .moveTo("scaling")
-    //  ;
-
-
-    //.activate(2);
-    //;
-
-    /*
-    this.cp5.addCheckBox("checkBox")
-     .setPosition(width - this.cp_width + 20, 60)
-     .setSize(40, 40)
-     .setItemsPerRow(3)
-     .setSpacingColumn(40)
-     .setSpacingRow(20)
-     .addItem("Attract", 0)
-     .addItem("Repel", 50)
-     .addItem("Neutral", 100)
-     ;
-     */
   }
 
-
-
-  //this is the other function
-  void resetPositionControls() {
-
-    //println("resetting...");
-    //String[] controllers = { "btn_clear", "rbtn_seeking"};
-
-    //println(controllers.length);
-    //for (int i = 0; i < controllers.length; i++) {
-    //  println("i= " + i);
-    //  Controller c = cp5.getController(controllers[i]);
-    //  println(c.getPosition());
-    //}
-
-
-
+  void setPositionControls() {
+    //Default Tab
     this.cp5.getController("btn_clear")
-      .setPosition(width - this.cp_width + 20, 20);
-
+      .setPosition(width - this.cpWidth + 20, 20);
 
     this.cp5.getController("btn_reset")
-      .setPosition(width - this.cp_width + 100, 20);
-
+      .setPosition(width - this.cpWidth + 100, 20);
 
     this.cp5.getController("toggle_c")
-      .setPosition(width - this.cp_width + 20, 95);
+      .setPosition(width - this.cpWidth + 20, 95);
 
     this.cp5.getController("toggle_s")
-      .setPosition(width - this.cp_width + 100, 95);
+      .setPosition(width - this.cpWidth + 100, 95);
 
     this.cp5.getController("toggle_a")
-      .setPosition(width - this.cp_width + 180, 95);
+      .setPosition(width - this.cpWidth + 180, 95);
 
-    RadioButton tmp = this.cp5.get(RadioButton.class, "rbtn_seeking");
-    tmp.setPosition(width - this.cp_width + 20, 60);
-    tmp = this.cp5.get(RadioButton.class, "rbtn_mode");
-    tmp.setPosition(width - this.cp_width + 20, 340);
+    RadioButton rbtn = this.cp5.get(RadioButton.class, "rbtn_seeking");
+    rbtn.setPosition(width - this.cpWidth + 20, 60);
+    rbtn = this.cp5.get(RadioButton.class, "rbtn_mode");
+    rbtn.setPosition(width - this.cpWidth + 20, 340);
 
     this.cp5.getController("c_power")
-      .setPosition(width - this.cp_width + 20, 140);
+      .setPosition(width - this.cpWidth + 20, 140);
 
     this.cp5.getController("s_power")
-      .setPosition(width - this.cp_width + 20, 180);
+      .setPosition(width - this.cpWidth + 20, 180);
 
     this.cp5.getController("a_power")
-      .setPosition(width - this.cp_width + 20, 220);
-
+      .setPosition(width - this.cpWidth + 20, 220);
 
     this.cp5.getController("desired_s")
-      .setPosition(width - this.cp_width + 20, 260);
-
+      .setPosition(width - this.cpWidth + 20, 260);
 
     this.cp5.getController("neighbor_d")
-      .setPosition(width - this.cp_width + 20, 300);
+      .setPosition(width - this.cpWidth + 20, 300);
 
-
-
+    //Color Tab
     this.cp5.getController("c")
-      .setPosition(width - this.cp_width + 20, 20)
-      ;
+      .setPosition(width - this.cpWidth + 20, 20);
+
     this.cp5.getController("background_c")
-      .setPosition(width - this.cp_width + 20, 20 + this.cp_width - 40);
-    ;
+      .setPosition(width - this.cpWidth + 20, 20 + this.cpWidth - 40);
+
     this.cp5.getController("obs_c")
-      .setPosition(width - this.cp_width + 20, 20 + this.cp_width*2 - 40*2);
-    ;
+      .setPosition(width - this.cpWidth + 20, 20 + this.cpWidth*2 - 40*2);
 
+    //Scaling Tab
+    this.cp5.getController("boid_scl")
+      .setPosition(width - this.cpWidth + 20, 20);
 
-    ControlWindow wind = this.cp5.getWindow();
-    wind.setPositionOfTabs(width - this.cp_width, 0);
+    this.cp5.getController("obs_scl")
+      .setPosition(width - this.cpWidth + 20, 60);
 
+    //Scenario Tab
+    this.cp5.getController("btnTriangle")
+      .setPosition(width - this.cpWidth + 20, 20);
 
-    cp5.getController("boid_scl")
-      .setPosition(width - this.cp_width + 20, 20);
+    this.cp5.getController("btnWarehouse")
+      .setPosition(width - this.cpWidth + 20, 50);
 
-    cp5.getController("obs_scl")
-      .setPosition(width - this.cp_width + 20, 60);
+    this.cp5.getController("btnTurnAround")
+      .setPosition(width - this.cpWidth + 20, 380);
 
+    this.cp5.getController("btnOctagon")
+      .setPosition(width - this.cpWidth + 20, 80);
 
-    cp5.getController("btnTriangle")
-      .setPosition(width - this.cp_width + 20, 20)
-      ;
-    cp5.getController("btnWarehouse")
-      .setPosition(width - this.cp_width + 20, 50)
-      ;
-      
-      
-      cp5.getController("btnTurnAround")
-      .setPosition(width - this.cp_width + 20, 380);
-      
-      
-    cp5.getController("btnOctagon")
-      .setPosition(width - this.cp_width + 20, 80);
+    //Tab position
+    ControlWindow window = this.cp5.getWindow();
+    window.setPositionOfTabs(width - this.cpWidth, 0);
 
-
-    //cp5.getController("ui_scl_sl")
-    //.setPosition(width - this.cp_width + 20, 100);
-
-    //Tab test = this.cp5.get(Tab.class, "color");
-    //println(test.isMoveable());
-
-    //this.cp5.getTab("color")
-    ////.setPosition(50,50)
-    //.setMoveable(true)
-    //;
-
-
-
-
-
-
-    //.setSize(40, 20)
-    //.setColorForeground(color(120))
-    //.setColorActive(color(255))
-    //.setColorLabel(color(255))
-    //.setItemsPerRow(3)
-    //.setSpacingColumn(40)
-    //.addItem("Attract", 0)
-    //.addItem("Repel", 1)
-    //.addItem("Neutral", 2);
-
-
-    //this.cp5.addToggle("toggle_c")
-    //.setPosition(width - this.cp_width + 20, 100)
-    //.setSize(40, 20)
-    //.setValue(cohesion)
-    //.setLabel("Cohesion");
-    ////reset first toggle
-    //cohesion = !cohesion;
-
-    //this.cp5.addToggle("toggle_s")
-    //.setPosition(width - this.cp_width + 100, 100)
-    //.setSize(40, 20)
-    //.setValue(separation)
-    //.setLabel("Separation");
-    ////reset first toggle
-    //separation = !separation;
-
-
-    //this.cp5.addToggle("toggle_a")
-    //.setPosition(width - this.cp_width + 180, 100)
-    //.setSize(40, 20)
-    //.setValue(alignment)
-    //.setLabel("Alignment");
-    ////reset first toggle
-    //alignment = !alignment;
-    this.old_width = width;
+    //Set width
+    this.oldWindowWidth = width;
   }
 
 
-  //sync controlpanel with values
-  //Not working yet
-  //possible workaround link the toggles to the values
+  //Sync controlpanel with values
   public void sync_panel() {
-
-    Toggle tmp = this.cp5.get(Toggle.class, "toggle_c");
-    tmp.setValue(cohesion);
-    tmp = this.cp5.get(Toggle.class, "toggle_s");
-    tmp.setValue(separation);
-    tmp = this.cp5.get(Toggle.class, "toggle_a");
-    tmp.setValue(alignment);
+    Toggle toggle = this.cp5.get(Toggle.class, "toggle_c");
+    toggle.setValue(cohesion);
+    toggle = this.cp5.get(Toggle.class, "toggle_s");
+    toggle.setValue(separation);
+    toggle = this.cp5.get(Toggle.class, "toggle_a");
+    toggle.setValue(alignment);
     //toggle for the flip
     cohesion = !cohesion;
     separation = !separation;
@@ -456,14 +323,13 @@ class ControlPanel {
     this.cp5.getController("desired_s")
       .setValue(desired_s);
 
-
     this.cp5.getController("neighbor_d")
       .setValue(neighbor_d);
 
-    cp5.getController("boid_scl")
+    this.cp5.getController("boid_scl")
       .setValue(boid_scl);
 
-    cp5.getController("obs_scl")
+    this.cp5.getController("obs_scl")
       .setValue(obs_scl);
   }
 }
@@ -473,11 +339,7 @@ class ControlPanel {
 //Clear all boids
 public void btn_clear() {
   flock.clearBoids();
-
-  //'clear' console
-  for (int i = 0; i < 20; i++) {
-    println("");
-  }
+  clearConsole();
 }
 
 //Reset everything
@@ -515,10 +377,11 @@ public void btn_reset() {
 
   cpanel.sync_panel();
 
-  //'clear' console
-  for (int i = 0; i < 20; i++) {
-    println("");
-  }
+  clearConsole();
+}
+
+void clearConsole() {
+  for (int i = 0; i < 20; i++) println("");
 }
 
 
@@ -575,127 +438,112 @@ void c(int c) {
 
 void btnTriangle() {
   btn_reset();
-  obstacles.start_p.set((width-cpanel.cp_width)*0.5, height*0.1);
-  obstacles.end_p.set((width-cpanel.cp_width)*0.9, height*0.9);
+  obstacles.start_p.set((width-cpanel.cpWidth)*0.5, height*0.1);
+  obstacles.end_p.set((width-cpanel.cpWidth)*0.9, height*0.9);
   obstacles.addObstacle();
   obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cp_width)*0.1, height*0.9);
+  obstacles.end_p.set((width-cpanel.cpWidth)*0.1, height*0.9);
   obstacles.addObstacle();
   obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cp_width)*0.5, height*0.1);
+  obstacles.end_p.set((width-cpanel.cpWidth)*0.5, height*0.1);
   obstacles.addObstacle();
 }
 
 void btnWarehouse() {
   btn_reset(); 
   //house
-  obstacles.start_p.set((width-cpanel.cp_width)*0.6, height*0.2);
-  obstacles.end_p.set((width-cpanel.cp_width)*0.9, height*0.2);
+  obstacles.start_p.set((width-cpanel.cpWidth)*0.6, height*0.2);
+  obstacles.end_p.set((width-cpanel.cpWidth)*0.9, height*0.2);
   obstacles.addObstacle();
   obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cp_width)*0.9, height*0.5);
+  obstacles.end_p.set((width-cpanel.cpWidth)*0.9, height*0.5);
   obstacles.addObstacle();
   obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cp_width)*0.82, height*0.5);
+  obstacles.end_p.set((width-cpanel.cpWidth)*0.82, height*0.5);
   obstacles.addObstacle();
   obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cp_width)*0.82, height*0.3);
+  obstacles.end_p.set((width-cpanel.cpWidth)*0.82, height*0.3);
   obstacles.addObstacle();
   obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cp_width)*0.6, height*0.3);
+  obstacles.end_p.set((width-cpanel.cpWidth)*0.6, height*0.3);
   obstacles.addObstacle();
   obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cp_width)*0.6, height*0.2);
+  obstacles.end_p.set((width-cpanel.cpWidth)*0.6, height*0.2);
   obstacles.addObstacle();
-  
+
   //rack 1
-  obstacles.start_p.set((width-cpanel.cp_width)*0.1, height*0.2);
-  obstacles.end_p.set((width-cpanel.cp_width)*0.4, height*0.2);
+  obstacles.start_p.set((width-cpanel.cpWidth)*0.1, height*0.2);
+  obstacles.end_p.set((width-cpanel.cpWidth)*0.4, height*0.2);
   obstacles.addObstacle();
   obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cp_width)*0.4, height*0.3);
+  obstacles.end_p.set((width-cpanel.cpWidth)*0.4, height*0.3);
   obstacles.addObstacle();
   obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cp_width)*0.1, height*0.3);
+  obstacles.end_p.set((width-cpanel.cpWidth)*0.1, height*0.3);
   obstacles.addObstacle();
   obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cp_width)*0.1, height*0.2);
+  obstacles.end_p.set((width-cpanel.cpWidth)*0.1, height*0.2);
   obstacles.addObstacle();  
-  
+
   //rack 2
-  obstacles.start_p.set((width-cpanel.cp_width)*0.1, height*0.5);
-  obstacles.end_p.set((width-cpanel.cp_width)*0.4, height*0.5);
+  obstacles.start_p.set((width-cpanel.cpWidth)*0.1, height*0.5);
+  obstacles.end_p.set((width-cpanel.cpWidth)*0.4, height*0.5);
   obstacles.addObstacle();
   obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cp_width)*0.4, height*0.6);
+  obstacles.end_p.set((width-cpanel.cpWidth)*0.4, height*0.6);
   obstacles.addObstacle();
   obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cp_width)*0.1, height*0.6);
+  obstacles.end_p.set((width-cpanel.cpWidth)*0.1, height*0.6);
   obstacles.addObstacle();
   obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cp_width)*0.1, height*0.5);
+  obstacles.end_p.set((width-cpanel.cpWidth)*0.1, height*0.5);
   obstacles.addObstacle();  
-  
+
   //rack 3
-  obstacles.start_p.set((width-cpanel.cp_width)*0.1, height*0.8);
-  obstacles.end_p.set((width-cpanel.cp_width)*0.4, height*0.8);
+  obstacles.start_p.set((width-cpanel.cpWidth)*0.1, height*0.8);
+  obstacles.end_p.set((width-cpanel.cpWidth)*0.4, height*0.8);
   obstacles.addObstacle();
   obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cp_width)*0.4, height*0.9);
+  obstacles.end_p.set((width-cpanel.cpWidth)*0.4, height*0.9);
   obstacles.addObstacle();
   obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cp_width)*0.1, height*0.9);
+  obstacles.end_p.set((width-cpanel.cpWidth)*0.1, height*0.9);
   obstacles.addObstacle();
   obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cp_width)*0.1, height*0.8);
+  obstacles.end_p.set((width-cpanel.cpWidth)*0.1, height*0.8);
   obstacles.addObstacle();
 }
 
-void btnOctagon(){
+void btnOctagon() {
   btn_reset();
-  
+
   //octagan  
-  obstacles.start_p.set((width-cpanel.cp_width)*0.35, height*0.05);
-  obstacles.end_p.set((width-cpanel.cp_width)*0.65, height*0.05);
+  obstacles.start_p.set((width-cpanel.cpWidth)*0.35, height*0.05);
+  obstacles.end_p.set((width-cpanel.cpWidth)*0.65, height*0.05);
   obstacles.addObstacle();
   obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cp_width)*0.95, height*0.35);
+  obstacles.end_p.set((width-cpanel.cpWidth)*0.95, height*0.35);
   obstacles.addObstacle();
   obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cp_width)*0.95, height*0.65);
+  obstacles.end_p.set((width-cpanel.cpWidth)*0.95, height*0.65);
   obstacles.addObstacle();
   obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cp_width)*0.65, height*0.95);
+  obstacles.end_p.set((width-cpanel.cpWidth)*0.65, height*0.95);
   obstacles.addObstacle();
   obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cp_width)*0.35, height*0.95);
+  obstacles.end_p.set((width-cpanel.cpWidth)*0.35, height*0.95);
   obstacles.addObstacle();
   obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cp_width)*0.05, height*0.65);
+  obstacles.end_p.set((width-cpanel.cpWidth)*0.05, height*0.65);
   obstacles.addObstacle();
   obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cp_width)*0.05, height*0.35);
+  obstacles.end_p.set((width-cpanel.cpWidth)*0.05, height*0.35);
   obstacles.addObstacle();
   obstacles.start_p.set(obstacles.end_p);
-  obstacles.end_p.set((width-cpanel.cp_width)*0.35, height*0.05);
+  obstacles.end_p.set((width-cpanel.cpWidth)*0.35, height*0.05);
   obstacles.addObstacle();
-  
 }
 
-void btnTurnAround(){
+void btnTurnAround() {
   flock.turnFlockAround();
 }
-
-
-//void ui_scl_sl(float scl) {
-//  ui_scl = scl;
-//  cpanel.setWidth();
-//  cpanel.resetPositionControls();
-//}
-
-
-/*
-public void checkBox(){
- println("testing checkbox"); 
- }
- */
