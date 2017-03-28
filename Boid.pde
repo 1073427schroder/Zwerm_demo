@@ -34,7 +34,7 @@ class Boid {
     maxforce = 0.1;
     //maxforce = 0.075;
     d = 150;
-    id = getID();
+    id = flock.getID();
     //this.crowded = false;
 
     //set up for averaging heading

@@ -14,7 +14,7 @@ class Obstacle {
   }
 
   boolean intersectsPoint(int pointX, int pointY) {
-    float distance = calcDistPointToLine(startPosition, endPosition, new PVector(pointX, pointY), new PVector());
+    float distance = calcDistPointToLine(this.startPosition, this.endPosition, new PVector(pointX, pointY), new PVector());
     distance = sqrt(distance);
     if (distance < 20*obs_scl) return true;
     else return false;

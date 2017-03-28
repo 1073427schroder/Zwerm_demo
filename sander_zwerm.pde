@@ -225,9 +225,9 @@ void keyPressed() {
 }
 
 
-int getID() {
-  return id_counter++;
-}
-void reset_ids() {
-  id_counter = 0;
-}
+//int getID() {
+//  return id_counter++;
+//}
+//void reset_ids() {
+//  id_counter = 0;
+//}

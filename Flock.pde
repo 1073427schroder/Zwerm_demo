@@ -1,7 +1,6 @@
 class Flock {
   ArrayList<Boid> boids;
 
-  //constructor
   Flock() {
     this.boids = new ArrayList<Boid>();
   }
@@ -17,15 +16,12 @@ class Flock {
     }
   }
 
-  //add a boid
   void addBoid(Boid b) {
     this.boids.add(b);
   }
 
-  //clear all boids
   void clearBoids() {
     this.boids.clear();
-    reset_ids();
   }
 
   ArrayList<Boid> getBoids() {
@@ -43,5 +39,10 @@ class Flock {
     //    for (Boid b : this.boids) {
     //      //b.color_b = c;
     //    }
+  }
+
+  int getID() {
+    //no need for -1, the boid isn't added yet
+    return (this.boids.size());
   }
 }
