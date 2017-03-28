@@ -10,7 +10,11 @@ class Flock {
     for (Boid b : this.boids) {
       b.run(this.boids);
     }
-    //setTalkedToFalse
+    
+    setTalkedToFalse();
+  }
+
+  void setTalkedToFalse() {
     for (Boid o : this.boids) {
       o.talkedThisFrame=false;
     }
