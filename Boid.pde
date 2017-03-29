@@ -6,7 +6,6 @@ class Boid {
   float radius;
   float maxspeed;
   float maxforce;
-  float d;
   PVector[] previousRotation;
   int id;
   //boolean crowded;
@@ -30,7 +29,6 @@ class Boid {
     this.radius = 2.0;
     this.maxspeed = 2.5;
     this.maxforce = 0.1;
-    this.d = 150;
     id = flock.getID();
 
     setupPreviousRotation();
