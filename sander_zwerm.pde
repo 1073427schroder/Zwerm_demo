@@ -7,6 +7,7 @@ enum Mode {
 }
 Mode mode = Mode.BOIDS;
 
+boolean disableTurnAround = false;
 boolean collisionDanger = false;
 int timestampCollisionDanger = millis();
 int numberOfTurns = 0;

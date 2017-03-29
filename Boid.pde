@@ -49,6 +49,7 @@ class Boid {
 
   //do all the things required to run
   void run(ArrayList<Boid> boids) {
+    if(disableTurnAround) this.turnAroundAnimationCounter = 0;
     if (!currentlyTurningAround()) {
       flock(boids);
       //override flock movement
@@ -546,9 +547,9 @@ class Boid {
     noStroke();
     strokeWeight(1);
     float theta = this.velocity.heading() + PI/2;
-    //float theta = ((velocity.heading() + prev_rotation) * 0.5) + PI/2;
-    //average rotation
-    //shift list 1 down
+    ////float theta = ((velocity.heading() + prev_rotation) * 0.5) + PI/2;
+    ////average rotation
+    ////shift list 1 down
     for (int i = 0; i < this.previousRotation.length - 1; i++) {
       this.previousRotation[i] = this.previousRotation[i+1];
     }
@@ -566,7 +567,7 @@ class Boid {
     direction.div(this.previousRotation.length);
     theta =  direction.heading() + PI/2 ;
 
-    //end
+    ////end
     fill(boid_c);
     //stroke(255);
     pushMatrix();
