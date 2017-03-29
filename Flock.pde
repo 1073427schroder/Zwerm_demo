@@ -38,12 +38,12 @@ class Flock {
     }
   }
 
-  void changeColor(int c) {
+  //void changeColor(int c) {
 
-    //    for (Boid b : this.boids) {
-    //      //b.color_b = c;
-    //    }
-  }
+  //  //    for (Boid b : this.boids) {
+  //  //      //b.color_b = c;
+  //  //    }
+  //}
 
   int getID() {
     //no need for -1, the boid isn't added yet

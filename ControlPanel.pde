@@ -433,7 +433,7 @@ void toggle_a() {
 }
 
 void c(int c) {
-  flock.changeColor(c);
+  //flock.changeColor(c);
   boid_c = c;
 }
 
