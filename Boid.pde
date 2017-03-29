@@ -2,12 +2,12 @@ class Boid {
   PVector location;
   PVector velocity;
   PVector acceleration;
-  PVector obstacle_vector;
+  PVector obstacleVector;
   float radius;
   float maxspeed;
   float maxforce;
   float d;
-  PVector[] prev_rotation;
+  PVector[] previousRotation;
   int id;
   //boolean crowded;
   static final int numberOfNeighborsWhenCrowded = 3;
@@ -16,13 +16,13 @@ class Boid {
   int lastFrameTurnedAround = frameCount;
   boolean talkedThisFrame = false;
   int turnAroundAnimationCounter = 0;
-  PVector tmp_heading = new PVector(0, 0);
+  PVector projectedHeading = new PVector(0, 0);
   static final int TURN_AROUND_LENGTH = 20;
   static final int TURN_AROUND_RESET_TIME = 300;
   float stepDown;
 
   Boid(float x, float y) {
-    this.obstacle_vector = new PVector(0, 0);
+    this.obstacleVector = new PVector(0, 0);
     this.acceleration = new PVector(0, 0);
     this.velocity = new PVector(random(-2, 2), random(-2, 2));
     this.velocity.setMag(0.5);
@@ -30,81 +30,65 @@ class Boid {
     this.radius = 2.0;
     this.maxspeed = 2.5;
     this.maxforce = 0.1;
-    //maxforce = 0.075;
-    d = 150;
+    this.d = 150;
     id = flock.getID();
-    //this.crowded = false;
 
-    //set up for averaging heading
-    prev_rotation = new PVector[5];
-    for (int i = 0; i < prev_rotation.length; i++) {
-      PVector tmp_vel = new PVector(0, 0);
-      tmp_vel.set(velocity);
-      tmp_vel.normalize();
-      prev_rotation[i] = tmp_vel;
+    setupPreviousRotation();
+  }
+
+
+
+  //set up for averaging heading
+  void setupPreviousRotation() {
+    this.previousRotation = new PVector[5];
+    for (int i = 0; i < this.previousRotation.length; i++) {
+      PVector tmpVelocity = new PVector(0, 0);
+      tmpVelocity.set(velocity);
+      tmpVelocity.normalize();
+      this.previousRotation[i] = tmpVelocity;
     }
   }
 
   //do all the things required to run
   void run(ArrayList<Boid> boids) {
-    if (turnAroundAnimationCounter <= 0) {
+    if (!currentlyTurningAround()) {
       flock(boids);
-      //test
+      //override flock movement
       avoidCornerCollisions();
-    } else if ( turnAroundAnimationCounter > floor(TURN_AROUND_LENGTH * 0.5)) {
-      slow_down();
-      turnAroundAnimationCounter--;
-    } else if (turnAroundAnimationCounter == floor(TURN_AROUND_LENGTH*0.5)) {
-      change_heading();      
-      turnAroundAnimationCounter--;
-    } else if (turnAroundAnimationCounter > 0) {
-      speed_up();      
-      turnAroundAnimationCounter--;
-      if (turnAroundAnimationCounter == 1) lastFrameTurnedAround = frameCount;
+    } else {
+      animateTurningAround();
     }
-    update(boids);
+    update();
     borders();
     render();
-    //checkIfCrowded();
-    //if (checkIfCrowded()) {
-    //  //println("Druk hier!");
-    //  collisionDanger = true;
-    //}
+  }
 
-    //talkedThisFrame = false;
+  boolean currentlyTurningAround() {
+    return (this.turnAroundAnimationCounter > 0);
+  }
+
+  void animateTurningAround() {
+    if (this.turnAroundAnimationCounter > floor(TURN_AROUND_LENGTH * 0.5)) {        //first half of turning around
+      slowDown();
+      this.turnAroundAnimationCounter--;
+    } else if (this.turnAroundAnimationCounter == floor(TURN_AROUND_LENGTH*0.5)) {  //at the halfway point of turning around
+      changeHeading();      
+      this.turnAroundAnimationCounter--;
+    } else if (this.turnAroundAnimationCounter > 0) {                               //last part of turning around
+      speedUp();      
+      this.turnAroundAnimationCounter--;
+      if (this.turnAroundAnimationCounter == 1) this.lastFrameTurnedAround = frameCount;
+    }
   }
 
   //update location with velocity
-  void update(ArrayList<Boid> boids) {
-    velocity.add(acceleration);
-    velocity.limit(maxspeed);
-    //slow down, bunching prevention
-    //slow_down(boids);
-    location.add(velocity);
-    //wrap();
-    acceleration.mult(0);
+  void update() {
+    this.velocity.add(this.acceleration);
+    this.velocity.limit(this.maxspeed);
+    this.location.add(this.velocity);
+    this.acceleration.mult(0);
   }
 
-  /*
-  void applyBehaviors() {
-   if (seeking) {
-   PVector seek = seek(target);
-   seek.mult(1);
-   applyForce(seek);
-   }
-   //boid.arrive(target);
-   if (avoiding) {
-   PVector avoid = avoid();
-   avoid.mult(2);
-   applyForce(avoid);
-   }
-   if (separating) {
-   PVector separate = separate(boids);
-   separate.mult(1);
-   applyForce(separate);
-   }
-   }
-   */
   //applies force
   void applyForce(PVector force) {
     acceleration.add(force);
@@ -115,15 +99,15 @@ class Boid {
     PVector sep = separate(boids);
     PVector ali = align(boids);
     PVector coh = cohesion(boids);
-    PVector see = cursor_seeking();
-    PVector avo = cursor_avoiding();
+    PVector see = cursorAttracting();
+    PVector avo = cursorReppeling();
     PVector obs = avoidObstacle();
 
 
     sep.mult(s_power*0.02);
     ali.mult(a_power*0.01);
     coh.mult(c_power*0.01);
-    see.mult(0.5);
+    see.mult(0.8);
     avo.mult(1.0);
     obs.mult(4.0);
 
@@ -165,7 +149,6 @@ class Boid {
       float d = PVector.dist(location, other.location);
       if ((this.id != other.id) && (d < this.crowdedSpace)) {
         counter++;
-        //println("counter: " + counter);
       }
     }
     if (counter > numberOfNeighborsWhenCrowded) {
@@ -179,16 +162,11 @@ class Boid {
   }
 
   void tellNeighborsToTurnAround() {
-    //talkedThisFrame = true;
+    this.talkedThisFrame = true;
     float maximumDistance = neighbor_d * boid_scl*2.5;
     for (Boid other : flock.getBoids()) {
       float distance = PVector.dist(location, other.location);
       if (this.id != other.id && distance < maximumDistance) other.turnAround();
-
-      //float d = PVector.dist(location, other.location);
-      //if ((this.id != other.id) && (d < maximumDistance)) {
-      //  other.turnAround();
-      //}
     }
   }
 
@@ -201,25 +179,22 @@ class Boid {
 
   void turnAround() {
     turnAroundAnimationCounter = TURN_AROUND_LENGTH;
-    projected_heading();
+    setProjectedHeading();
     calculateStepDown();
-    //this.velocity.mult(-1);    
-    //lastFrameTurnedAround = frameCount;
   }
 
-  ////without animation
-  //void turnAround() {
-  //  this.velocity.mult(-1);    
-  //  lastFrameTurnedAround = frameCount;
-  //}
+  void setProjectedHeading() {
+    this.projectedHeading.set(this.velocity);
+    this.projectedHeading.mult(-1);
+  }
 
   void avoidCornerCollisions() {
     if (checkIfCrowded()) {
       if (!hasTurnedRecently()) {
         turnAround();
-        if (!talkedThisFrame) {
+        if (!this.talkedThisFrame) {
           tellNeighborsToTurnAround();
-          talkedThisFrame = true;
+          this.talkedThisFrame = true;
         }
       }
     }
@@ -227,35 +202,21 @@ class Boid {
 
   void calculateStepDown() {
     this.stepDown = this.velocity.mag() / (floor(TURN_AROUND_LENGTH/2));
-    //println("Stepdown = " + this.stepDown);
   }
 
-  void slow_down() {
-    this.velocity.limit(maxspeed);
-    //this.velocity.mult(0.95);    
+  void slowDown() {
+    this.velocity.limit(this.maxspeed);
     this.velocity.setMag(this.velocity.mag()-this.stepDown);
-    //println("Slowing down, velocity: " + this.velocity.mag());
   }
 
-  void projected_heading() {
-    //println("Velocity before: " + this.velocity);
-    tmp_heading.set(this.velocity);
-    tmp_heading.mult(-1);
-    //println("Velocity after: " + this.velocity);
-    //println("Heading after: " + this.tmp_heading);
+  void changeHeading() {
+    this.projectedHeading.setMag(this.velocity.mag());
+    this.velocity.set(this.projectedHeading);
   }
 
-  void change_heading() {
-    tmp_heading.setMag(this.velocity.mag());
-    this.velocity.set(tmp_heading);
-  }
-
-  void speed_up() {    
+  void speedUp() {    
     this.velocity.setMag(this.velocity.mag()+this.stepDown);
-    //println("Speeding up, velocity: " + this.velocity.mag());
-
-    //this.velocity.mult(1.05);
-    this.velocity.limit(maxspeed);
+    this.velocity.limit(this.maxspeed);
   }
 
   ////prevent bunching up
@@ -287,13 +248,12 @@ class Boid {
       int count = 0;
 
       for (Boid other : boids) {
-        float d = PVector.dist(location, other.location);
-
-        if ((this.id != other.id) && (d < desired_s * boid_scl * 0.5)) {
-          PVector diff = PVector.sub(location, other.location);
-          diff.normalize();
-          diff.div(d);
-          sum.add(diff);
+        float localDistance = PVector.dist(this.location, other.location);
+        if ((this.id != other.id) && (localDistance < desired_s * boid_scl * 0.5)) {
+          PVector difference = PVector.sub(this.location, other.location);
+          difference.normalize();
+          difference.div(localDistance);
+          sum.add(difference);
           count++;
         }
       }
@@ -303,37 +263,34 @@ class Boid {
       }
 
       if (sum.mag() > 0) {
-        sum.setMag(maxspeed);
+        sum.setMag(this.maxspeed);
         PVector steer = PVector.sub(sum, velocity);
-        steer.limit(maxforce);
-        //applyForce(steer);
+        steer.limit(this.maxforce);
         return steer;
       }
       return(new PVector(0, 0));
-    } else     return(new PVector(0, 0));
+    } else return(new PVector(0, 0));
   }
 
   //seek a target
   PVector seek(PVector target) {
-    PVector desired = PVector.sub(target, location);
+    PVector desired = PVector.sub(target, this.location);
     desired.normalize();
-    desired.mult(maxspeed);
-    PVector steer = PVector.sub(desired, velocity);
-    steer.limit(maxforce);
-    //applyForce(steer);
+    desired.mult(this.maxspeed);
+    PVector steer = PVector.sub(desired, this.velocity);
+    steer.limit(this.maxforce);
     return steer;
   }
 
   //seek the cursor
-  PVector cursor_seeking() {
+  PVector cursorAttracting() {
     if (seeking) {
       PVector target = new PVector(mouseX, mouseY);
-      PVector desired = PVector.sub(target, location);
+      PVector desired = PVector.sub(target, this.location);
       desired.normalize();
-      desired.mult(maxspeed);
-      PVector steer = PVector.sub(desired, velocity);
-      steer.limit(maxforce);
-      //applyForce(steer);
+      desired.mult(this.maxspeed);
+      PVector steer = PVector.sub(desired, this.velocity);
+      steer.limit(this.maxforce);
       return steer;
     } else {
       return new PVector(0, 0);
@@ -342,16 +299,15 @@ class Boid {
 
 
   //avoid the cursor, flee from cursor
-  PVector cursor_avoiding() {
+  PVector cursorReppeling() {
     if (avoiding) {
       PVector target = new PVector(mouseX, mouseY);
-      PVector desired = PVector.sub(target, location);
+      PVector desired = PVector.sub(target, this.location);
       desired.normalize();
-      desired.mult(maxspeed);
+      desired.mult(this.maxspeed);
       desired.mult(-1);
-      PVector steer = PVector.sub(desired, velocity);
-      steer.limit(maxforce);
-      //applyForce(steer);
+      PVector steer = PVector.sub(desired, this.velocity);
+      steer.limit(this.maxforce);
       return steer;
     } else {
       return new PVector(0, 0);
@@ -363,46 +319,18 @@ class Boid {
   void arrive(PVector target) {
     PVector desired = PVector.sub(target, location);
 
-    float d = desired.mag();    
+    float distanceToTarget = desired.mag();    
     desired.normalize();
 
-    if (d < 100) {
-      float m = map(d, 0, 100, 0, maxspeed);
-      desired.mult(m);
+    if (distanceToTarget < 100) {
+      float multitude = map(distanceToTarget, 0, 100, 0, maxspeed);
+      desired.mult(multitude);
     } else {
-      desired.mult(maxspeed);
+      desired.mult(this.maxspeed);
     }
-
-    PVector steer = PVector.sub(desired, velocity);
-    steer.limit(maxforce);
+    PVector steer = PVector.sub(desired, this.velocity);
+    steer.limit(this.maxforce);
     applyForce(steer);
-  }
-
-  //avoid
-  PVector avoid() {
-    PVector desired = null;
-
-    if (location.x < d) {
-      desired = new PVector(maxspeed, velocity.y);
-    } else if (location.x > width -d) {
-      desired = new PVector(-maxspeed, velocity.y);
-    } 
-
-    if (location.y < d) {
-      desired = new PVector(velocity.x, maxspeed);
-    } else if (location.y > height-d) {
-      desired = new PVector(velocity.x, -maxspeed);
-    } 
-
-    if (desired != null) {
-      desired.normalize();
-      desired.mult(maxspeed);
-      PVector steer = PVector.sub(desired, velocity);
-      steer.limit(maxforce * 1.5);
-      //applyForce(steer);
-      return(steer);
-    }
-    return(new PVector(0, 0));
   }
 
   //alignment rule
@@ -411,8 +339,8 @@ class Boid {
       PVector sum = new PVector(0, 0);
       int count = 0;
       for (Boid other : boids) {
-        float d = PVector.dist(location, other.location);
-        if ((this.id != other.id) && (d < neighbor_d  * boid_scl * 0.5)) {
+        float localDistance = PVector.dist(location, other.location);
+        if ((this.id != other.id) && (localDistance < neighbor_d  * boid_scl * 0.5)) {
           sum.add(other.velocity);
           count++;
         }
@@ -420,9 +348,9 @@ class Boid {
       if (count > 0) {
         sum.div(count);
         sum.normalize();
-        sum.mult(maxspeed);
-        PVector steer = PVector.sub(sum, velocity);
-        steer.limit(maxforce);
+        sum.mult(this.maxspeed);
+        PVector steer = PVector.sub(sum, this.velocity);
+        steer.limit(this.maxforce);
         return steer;
       } else {
         return new PVector (0, 0);
@@ -436,8 +364,8 @@ class Boid {
       PVector sum = new PVector(0, 0);
       int count = 0;
       for (Boid other : boids) {
-        float d = PVector.dist(location, other.location);
-        if ((this.id != other.id) && (d<neighbor_d  * boid_scl * 0.5)) {
+        float localDistance = PVector.dist(location, other.location);
+        if ((this.id != other.id) && (localDistance < neighbor_d  * boid_scl * 0.5)) {
           sum.add(other.location);
           count++;
         }
@@ -458,28 +386,27 @@ class Boid {
   // or just future predicting
   // future predicting
   PVector avoidObstacle() {
-    float looking_distance = 10*obs_scl+10;
+    float lookingDistance = 10*obs_scl+10;
     PVector sum = new PVector(0, 0);
-    PVector more_velocity = new PVector(0, 0);
-    more_velocity.set(velocity);
-    more_velocity.mult(30);
-    PVector future_location = new PVector(0, 0);
-    future_location.set(PVector.add(location, more_velocity));
+    PVector biggerVelocity = new PVector(0, 0);
+    biggerVelocity.set(this.velocity);
+    biggerVelocity.mult(30);
+    PVector futureLocation = new PVector(0, 0);
+    futureLocation.set(PVector.add(location, biggerVelocity));
     int count = 0;
     //obstacles.checkDistance
     for (Obstacle o : obstacles.obstacles) {
-      obstacle_vector.set(0, 0);
-      float dist = o.calcDistPointToLine(o.startPosition, o.endPosition, future_location, obstacle_vector);
-      dist = sqrt(dist);
-      if (dist < looking_distance) {
-        future_location.add(more_velocity.mult(20));
-        if (o.startPosition.dist(future_location) > o.endPosition.dist(future_location)) obstacle_vector.set(o.startPosition);
-        else obstacle_vector.set(o.endPosition);
-        //obstacle_vector.set(o.end_position);
-        PVector diff = PVector.sub(location, obstacle_vector);
-        diff.normalize();
-        diff.div(d);        // Weight by distance
-        sum.set(diff);
+      obstacleVector.set(0, 0);
+      float localDistance = o.calcDistPointToLine(o.startPosition, o.endPosition, futureLocation, obstacleVector);
+      localDistance = sqrt(localDistance);
+      if (localDistance < lookingDistance) {
+        futureLocation.add(biggerVelocity.mult(20));
+        if (o.startPosition.dist(futureLocation) > o.endPosition.dist(futureLocation)) obstacleVector.set(o.startPosition);
+        else obstacleVector.set(o.endPosition);
+        PVector difference = PVector.sub(this.location, obstacleVector);
+        difference.normalize();
+        difference.div(localDistance);        // Weight by distance
+        sum.set(difference);
         //dist_smallest = dist;
         //sum.add(diff);
         //count++;            // Keep track of how many
@@ -488,13 +415,13 @@ class Boid {
     //cut corners prevention
     //overide when current loc is to close
     for (Obstacle o : obstacles.obstacles) {
-      obstacle_vector.set(0, 0);
-      float dist = o.calcDistPointToLine(o.startPosition, o.endPosition, location, obstacle_vector);
-      dist = sqrt(dist);
-      if (dist < looking_distance) {
-        PVector diff = PVector.sub(location, obstacle_vector);
-        diff.normalize();
-        sum.set(diff);
+      obstacleVector.set(0, 0);
+      float localDistance = o.calcDistPointToLine(o.startPosition, o.endPosition, this.location, obstacleVector);
+      localDistance = sqrt(localDistance);
+      if (localDistance < lookingDistance) {
+        PVector difference = PVector.sub(this.location, obstacleVector);
+        difference.normalize();
+        sum.set(difference);
         count = 1;
       }
     }
@@ -503,10 +430,10 @@ class Boid {
       sum.div(count);
     }
     if (sum.mag() > 0) {
-      sum.setMag(maxspeed);
-      PVector steer = PVector.sub(sum, velocity);
+      sum.setMag(this.maxspeed);
+      PVector steer = PVector.sub(sum, this.velocity);
       //PVector steer = PVector.sub(velocity, sum);
-      steer.limit(maxforce);
+      steer.limit(this.maxforce);
       //steer.rotate(steer.heading() + PI/2);
       //velocity.heading() + PI/2
       //println(steer.heading());
@@ -610,47 +537,47 @@ class Boid {
 
   // Wraparound
   void borders() {
-    if (location.x < -radius) location.x += width+radius-cpanel.cpWidth;
-    if (location.y < -radius) location.y += height+radius;
-    if (location.x > width+radius-cpanel.cpWidth) location.x -= width-radius-cpanel.cpWidth;
-    if (location.y > height+radius) location.y -= height-radius;
+    if (this.location.x < -this.radius) this.location.x += width+this.radius-cpanel.cpWidth;
+    if (this.location.y < -this.radius) this.location.y += height+this.radius;
+    if (this.location.x > width+this.radius-cpanel.cpWidth) this.location.x -= width-this.radius-cpanel.cpWidth;
+    if (this.location.y > height+this.radius) this.location.y -= height-this.radius;
   }
 
   //draw the boid
   void render() {
     noStroke();
     strokeWeight(1);
-    float theta = velocity.heading() + PI/2;
+    float theta = this.velocity.heading() + PI/2;
     //float theta = ((velocity.heading() + prev_rotation) * 0.5) + PI/2;
     //average rotation
     //shift list 1 down
-    for (int i = 0; i < prev_rotation.length - 1; i++) {
-      prev_rotation[i] = prev_rotation[i+1];
+    for (int i = 0; i < this.previousRotation.length - 1; i++) {
+      this.previousRotation[i] = this.previousRotation[i+1];
     }
     //put in current value
-    PVector tmp_vel = new PVector(0, 0);
-    tmp_vel.set(velocity);
-    tmp_vel.normalize();
-    prev_rotation[prev_rotation.length - 1] = tmp_vel;
+    PVector tmpVelocity = new PVector(0, 0);
+    tmpVelocity.set(this.velocity);
+    tmpVelocity.normalize();
+    this.previousRotation[this.previousRotation.length - 1] = tmpVelocity;
     //add all values
-    PVector dir =  new PVector(0, 0);
-    for (int i = 0; i < prev_rotation.length; i++) {
-      dir.add(prev_rotation[i]);
+    PVector direction =  new PVector(0, 0);
+    for (int i = 0; i < this.previousRotation.length; i++) {
+      direction.add(this.previousRotation[i]);
     }
     //average the values
-    dir.div(prev_rotation.length);
-    theta =  dir.heading() + PI/2 ;
+    direction.div(this.previousRotation.length);
+    theta =  direction.heading() + PI/2 ;
 
     //end
     fill(boid_c);
     //stroke(255);
     pushMatrix();
-    translate(location.x, location.y);
+    translate(this.location.x, this.location.y);
     rotate(theta);
     beginShape(TRIANGLES);
-    vertex(0, -radius*2*boid_scl);
-    vertex(-radius*boid_scl, radius*2*boid_scl);
-    vertex(radius*boid_scl, radius*2*boid_scl);
+    vertex(0, -this.radius*2*boid_scl);
+    vertex(-this.radius*boid_scl, this.radius*2*boid_scl);
+    vertex(this.radius*boid_scl, this.radius*2*boid_scl);
     endShape(CLOSE);
     popMatrix();
     //prev_rotation = theta;
