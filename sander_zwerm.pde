@@ -7,7 +7,7 @@ enum Mode {
 }
 Mode mode = Mode.BOIDS;
 
-boolean disableTurnAround = true;
+boolean disableTurnAround = false;
 boolean collisionDanger = false;
 int timestampCollisionDanger = millis();
 int numberOfTurns = 0;
@@ -81,8 +81,8 @@ void setStartValues() {
   s_power = 100;
   a_power = 100;
 
-  desired_s = 20.0f;
-  neighbor_d = 50.0f;
+  desired_s = 40.0f;
+  neighbor_d = 60.0f;
 }
 
 void setupWindow() {

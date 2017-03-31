@@ -51,17 +51,60 @@ class Boid {
 
   //do all the things required to run
   void run(ArrayList<Boid> boids) {
-    if(disableTurnAround) this.turnAroundAnimationCounter = 0;
+    if (disableTurnAround) this.turnAroundAnimationCounter = 0;
     if (!currentlyTurningAround()) {
-      flock(boids);
+      calculateForces(boids);
       //override flock movement
       avoidCornerCollisions();
     } else {
       animateTurningAround();
     }
+    //if close by, fly slower
+    //closeBySlowness();
+    //bumper
+    //bumper();
     update();
     borders();
     render();
+  }
+
+  void bumper() {
+    float smallestDistance = MAX_FLOAT;
+    //check all distances
+    for (Boid other : flock.getBoids()) {
+      if (this.id != other.id) {
+        float localDistance = PVector.dist(location, other.location);
+        if (localDistance < smallestDistance) {
+          //save smallest one
+          smallestDistance = localDistance;
+        }
+      }
+    }
+
+    if (smallestDistance < radius * boid_scl * 3) {
+      this.velocity.limit(0);
+    }
+  }
+
+  void closeBySlowness() {
+    float smallestDistance = MAX_FLOAT;
+    //check all distances
+    for (Boid other : flock.getBoids()) {
+      if (this.id != other.id) {
+        float localDistance = PVector.dist(location, other.location);
+        if (localDistance < smallestDistance) {
+          //save smallest one
+          smallestDistance = localDistance;
+        }
+      }
+    }
+
+    //limit speed accordingly
+    float personalSpace = desired_s * 0.75;
+    float limitingFactor = smallestDistance / personalSpace;
+    if (limitingFactor < 1) {
+      this.velocity.limit(maxspeed*limitingFactor);
+    }
   }
 
   boolean currentlyTurningAround() {
@@ -96,7 +139,7 @@ class Boid {
   }
 
   //applies behaviors
-  void flock(ArrayList<Boid> boids) {
+  void calculateForces(ArrayList<Boid> boids) {
     PVector sep = separate(boids);
     PVector ali = align(boids);
     PVector coh = cohesion(boids);
@@ -104,13 +147,45 @@ class Boid {
     PVector avo = cursorReppeling();
     PVector obs = avoidObstacle();
 
+    //transform multiplier from percentage to value
+    float sepMultiplier = s_power * 0.01;
+    float aliMultiplier = a_power * 0.01;
+    float cohMultiplier = c_power * 0.01;
 
-    sep.mult(s_power*0.02);
-    ali.mult(a_power*0.01);
-    coh.mult(c_power*0.01);
+    obs.mult(4.0);
+    if (obs.mag() == 0) { //no obstacle near
+      sep.mult(sepMultiplier*1.5);
+      ali.mult(aliMultiplier*1);
+      coh.mult(cohMultiplier*1);
+    } else {
+      sep.mult(sepMultiplier*1);
+      ali.mult(aliMultiplier*0.5);
+      coh.mult(cohMultiplier*0);
+    }
+
+    //if (checkIfCrowded()){
+    //  obs.mult(-1);
+    //  if (this.id == 0) println("Druk hier!");
+    //}
+
+    if (this.id == 0 && obs.mag() != 0) {
+      println("OBS mag: " + obs.mag());
+      println("SEP mag: " + sep.mag());
+    }
+
+
+
     see.mult(0.8);
     avo.mult(1.0);
-    obs.mult(4.0);
+
+    applyForce(obs);
+    applyForce(sep);
+    applyForce(ali);
+    applyForce(coh);
+
+    applyForce(see);
+    applyForce(avo);
+
 
     //sep.mult(4);
     //applyForce(sep);
@@ -122,25 +197,25 @@ class Boid {
     //applyForce(obs);
 
     //println(obs.mag());
-    if ( obs.mag() == 0) {
-      applyForce(sep);
-      applyForce(ali);
-      applyForce(coh);
-      applyForce(see);
-      applyForce(avo);
-      //testing
-      sep.mult(0.5);
-      applyForce(sep);
-      ali.mult(0.5);
-      applyForce(ali);
-    } else {
-      applyForce(obs);
-      sep.mult(0.5);
-      applyForce(sep);
-      ali.mult(0.5);
-      applyForce(ali);
-      //applyForce(see);
-    }
+    //if ( obs.mag() == 0) {
+    //  applyForce(sep);
+    //  applyForce(ali);
+    //  applyForce(coh);
+    //  applyForce(see);
+    //  applyForce(avo);
+    //  //testing
+    //  sep.mult(0.5);
+    //  applyForce(sep);
+    //  ali.mult(0.5);
+    //  applyForce(ali);
+    //} else {
+    //  applyForce(obs);
+    //  sep.mult(0.5);
+    //  applyForce(sep);
+    //  ali.mult(0.5);
+    //  applyForce(ali);
+    //  //applyForce(see);
+    //}
   }
 
   boolean checkIfCrowded() { 
@@ -382,10 +457,7 @@ class Boid {
 
   //************************************************************************************************//
   // obstacle avoidance way
-  // Force field way to be converted to obstacle avoidance
-  // take two, keep heading of group / individual
-  // or just future predicting
-  // future predicting
+  // Test for corner bunching prevention
   PVector avoidObstacle() {
     float lookingDistance = 10*obs_scl+10;
     PVector sum = new PVector(0, 0);
@@ -410,7 +482,7 @@ class Boid {
         sum.set(difference);
         //dist_smallest = dist;
         //sum.add(diff);
-        //count++;            // Keep track of how many
+        count++;            // Keep track of how many
       }
     }
     //cut corners prevention
@@ -423,12 +495,13 @@ class Boid {
         PVector difference = PVector.sub(this.location, obstacleVector);
         difference.normalize();
         sum.set(difference);
-        count = 1;
+        //count = 1;
       }
     }
 
-    if (count > 0) {
+    if (count > 1) {
       sum.div(count);
+      sum.mult(-1);
     }
     if (sum.mag() > 0) {
       sum.setMag(this.maxspeed);
@@ -443,6 +516,71 @@ class Boid {
       return steer;
     } else     return(new PVector(0, 0));
   }
+
+
+//  //************************************************************************************************//
+//  // obstacle avoidance way
+//  // Force field way to be converted to obstacle avoidance
+//  // take two, keep heading of group / individual
+//  // or just future predicting
+//  // future predicting
+//  PVector avoidObstacle() {
+//    float lookingDistance = 10*obs_scl+10;
+//    PVector sum = new PVector(0, 0);
+//    PVector biggerVelocity = new PVector(0, 0);
+//    biggerVelocity.set(this.velocity);
+//    biggerVelocity.mult(30);
+//    PVector futureLocation = new PVector(0, 0);
+//    futureLocation.set(PVector.add(location, biggerVelocity));
+//    int count = 0;
+//    //obstacles.checkDistance
+//    for (Obstacle o : obstacles.obstacles) {
+//      obstacleVector.set(0, 0);
+//      float localDistance = o.calcDistPointToLine(o.startPosition, o.endPosition, futureLocation, obstacleVector);
+//      localDistance = sqrt(localDistance);
+//      if (localDistance < lookingDistance) {
+//        futureLocation.add(biggerVelocity.mult(20));
+//        if (o.startPosition.dist(futureLocation) > o.endPosition.dist(futureLocation)) obstacleVector.set(o.startPosition);
+//        else obstacleVector.set(o.endPosition);
+//        PVector difference = PVector.sub(this.location, obstacleVector);
+//        difference.normalize();
+//        difference.div(localDistance);        // Weight by distance
+//        sum.set(difference);
+//        //dist_smallest = dist;
+//        //sum.add(diff);
+//        //count++;            // Keep track of how many
+//      }
+//    }
+//    //cut corners prevention
+//    //overide when current loc is to close
+//    for (Obstacle o : obstacles.obstacles) {
+//      obstacleVector.set(0, 0);
+//      float localDistance = o.calcDistPointToLine(o.startPosition, o.endPosition, this.location, obstacleVector);
+//      localDistance = sqrt(localDistance);
+//      if (localDistance < lookingDistance) {
+//        PVector difference = PVector.sub(this.location, obstacleVector);
+//        difference.normalize();
+//        sum.set(difference);
+//        count = 1;
+//      }
+//    }
+
+//    if (count > 0) {
+//      sum.div(count);
+//    }
+//    if (sum.mag() > 0) {
+//      sum.setMag(this.maxspeed);
+//      PVector steer = PVector.sub(sum, this.velocity);
+//      //PVector steer = PVector.sub(velocity, sum);
+//      steer.limit(this.maxforce);
+//      //steer.rotate(steer.heading() + PI/2);
+//      //velocity.heading() + PI/2
+//      //println(steer.heading());
+//      //steer.limit(maxforce * 1.5);
+//      //applyForce(steer);
+//      return steer;
+//    } else     return(new PVector(0, 0));
+//  }
 
   //************************************************************************************************//
 
@@ -547,10 +685,10 @@ class Boid {
   //draw the boid
   void render() {
     int tmpColor = boid_c;
-    if (this.special) {
+    if (this.special || this.id == 0) {
       boid_c = #FF4000;
     }
-    
+
     noStroke();
     strokeWeight(1);
     float theta = this.velocity.heading() + PI/2;

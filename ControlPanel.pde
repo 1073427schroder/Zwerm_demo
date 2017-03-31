@@ -376,6 +376,8 @@ public void btn_reset() {
   avoiding = false;
 
   mode = Mode.BOIDS;
+  
+  setStartValues();
 
   cpanel.sync_panel();
 
