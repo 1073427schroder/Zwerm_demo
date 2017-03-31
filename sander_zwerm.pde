@@ -3,7 +3,7 @@
 
 //Modes
 enum Mode {
-  BOIDS, ADD_OBS, ERASE_OBS
+  BOIDS, ADD_OBS, ERASE_OBS, SPECIAL_BOIDS
 }
 Mode mode = Mode.BOIDS;
 
@@ -136,6 +136,8 @@ void drawCursorBlobAndLine() {
 void mouseDragged() {
   if (canAddBoids() && mouseButton == RIGHT) {
     flock.addBoid(new Boid(mouseX, mouseY));
+  } else if (canAddSpecialBoids() && mouseButton == RIGHT) {
+    flock.addSpecialBoid(new Boid(mouseX, mouseY));
   } else if (canErase()) {
     obstacles.eraseObstacle(mouseX, mouseY);
   }
@@ -157,10 +159,18 @@ void mousePressed() {
   if (canAddBoids()) {
     flock.addBoid(new Boid(mouseX, mouseY));
   }
+
+  if (canAddSpecialBoids()) {
+    flock.addSpecialBoid(new Boid(mouseX, mouseY));
+  }
 }
 
 boolean canAddBoids() {
   return (mode == Mode.BOIDS && mouseX >= 0 && mouseX <= width - cpanel.cpWidth && mouseY >= 0 && mouseY <= height);
+}
+
+boolean canAddSpecialBoids() {
+  return (mode == Mode.SPECIAL_BOIDS && mouseX >= 0 && mouseX <= width - cpanel.cpWidth && mouseY >= 0 && mouseY <= height);
 }
 
 boolean canErase() {

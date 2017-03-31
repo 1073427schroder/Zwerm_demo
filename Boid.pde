@@ -19,6 +19,7 @@ class Boid {
   static final int TURN_AROUND_LENGTH = 20;
   static final int TURN_AROUND_RESET_TIME = 300;
   float stepDown;
+  boolean special;
 
   Boid(float x, float y) {
     this.obstacleVector = new PVector(0, 0);
@@ -30,6 +31,7 @@ class Boid {
     this.maxspeed = 2.5;
     this.maxforce = 0.1;
     id = flock.getID();
+    special = false;
 
     setupPreviousRotation();
   }
@@ -544,6 +546,11 @@ class Boid {
 
   //draw the boid
   void render() {
+    int tmpColor = boid_c;
+    if (this.special) {
+      boid_c = #FF4000;
+    }
+    
     noStroke();
     strokeWeight(1);
     float theta = this.velocity.heading() + PI/2;
@@ -580,5 +587,6 @@ class Boid {
     endShape(CLOSE);
     popMatrix();
     //prev_rotation = theta;
+    boid_c = tmpColor;
   }
 }

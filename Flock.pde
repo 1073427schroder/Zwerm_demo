@@ -23,6 +23,12 @@ class Flock {
   void addBoid(Boid b) {
     this.boids.add(b);
   }
+  
+  void addSpecialBoid(Boid b) {    
+    println("add special boid");
+    b.special = true;
+    this.boids.add(b);
+  }
 
   void clearBoids() {
     this.boids.clear();

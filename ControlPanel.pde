@@ -44,7 +44,7 @@ class ControlPanel {
       if (mode == Mode.BOIDS) rbtn.activate(0);
       else if (mode == Mode.ADD_OBS) rbtn.activate(1);
       else if (mode == Mode.ERASE_OBS) rbtn.activate(2);
-      
+
       drawText();
     }
   }
@@ -154,27 +154,28 @@ class ControlPanel {
       .setColorForeground(color(120))
       .setColorActive(color(255))
       .setColorLabel(color(255))
-      .setItemsPerRow(5)
-      .setSpacingColumn(80)
+      .setItemsPerRow(4)
+      .setSpacingColumn(40)
       .addItem("Boids", 0)
       .addItem("Obstacles", 1)
       .addItem("Eraser", 2)
+      .addItem("S_Boids", 3)
       ;
 
     //Color Tab
     this.cp5.addTab("color");
 
-    cp5.addColorWheel("c", width - this.cpWidth + 20, 20, 200 )
+    this.cp5.addColorWheel("c", width - this.cpWidth + 20, 20, 200 )
       .moveTo("color")
       .setLabel("Boids Color")
       ;
 
-    cp5.addColorWheel("background_c", width - this.cpWidth + 20, 20 + this.cpWidth - 20, 200  )
+    this.cp5.addColorWheel("background_c", width - this.cpWidth + 20, 20 + this.cpWidth - 20, 200  )
       .moveTo("color")
       .setLabel("Background Color")
       ;
 
-    cp5.addColorWheel("obs_c", width - this.cpWidth + 20, 20 + this.cpWidth*2 - 20, 200 )
+    this.cp5.addColorWheel("obs_c", width - this.cpWidth + 20, 20 + this.cpWidth*2 - 20, 200 )
       .moveTo("color")
       .setLabel("Obstacle Color")
       ;
@@ -182,42 +183,42 @@ class ControlPanel {
     //Scaling Tab
     this.cp5.addTab("scaling");
 
-    cp5.addSlider("boid_scl")
+    this.cp5.addSlider("boid_scl")
       .setRange(0.5, 10)
       .setSize(100, 20)
       .setLabel("Boid Scale")
       .moveTo("scaling")
       ;
 
-    cp5.addSlider("obs_scl")
+    this.cp5.addSlider("obs_scl")
       .setRange(0.5, 10)
       .setSize(100, 20)
       .setLabel("Obstacle Scale")
       .moveTo("scaling")
       ;
 
-    //Scenaria Tab
+    //Scenario Tab
     this.cp5.addTab("scenario's");
 
-    cp5.addButton("btnTriangle")
+    this.cp5.addButton("btnTriangle")
       .setSize(100, 20)
       .setLabel("Triangle")
       .moveTo("scenario's")
       ;
 
-    cp5.addButton("btnWarehouse")
+    this.cp5.addButton("btnWarehouse")
       .setSize(100, 20)
       .setLabel("Warehouse")
       .moveTo("scenario's")
       ;
 
-    cp5.addButton("btnOctagon")
+    this.cp5.addButton("btnOctagon")
       .setSize(100, 20)
       .setLabel("Octagon")
       .moveTo("scenario's")
       ;
 
-    cp5.addButton("btnTurnAround")
+    this.cp5.addButton("btnTurnAround")
       .setSize(100, 20)
       .setLabel("TurnAround")
       ;
@@ -416,6 +417,9 @@ public void rbtn_mode(int state) {
   case 2:  
     obstacles.creatingObstacles = false;
     mode = Mode.ERASE_OBS;
+    break;
+  case 3:
+    mode = Mode.SPECIAL_BOIDS;
     break;
   default:
     break;
