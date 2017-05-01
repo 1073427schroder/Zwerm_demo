@@ -345,6 +345,9 @@ class Boid {
       for (Boid other : boids) {
         float localDistance = PVector.dist(this.location, other.location);
         if ((this.id != other.id) && (localDistance < desired_s * boid_scl * 0.5)) {
+          //if i'm special, ignore the non special
+          if(this.special && !other.special) break;          
+          //else act normal
           PVector difference = PVector.sub(this.location, other.location);
           difference.normalize();
           difference.div(localDistance);
@@ -435,7 +438,7 @@ class Boid {
       int count = 0;
       for (Boid other : boids) {
         float localDistance = PVector.dist(location, other.location);
-        if ((this.id != other.id) && (localDistance < neighbor_d  * boid_scl * 0.5)) {
+        if ((this.id != other.id) && (localDistance < neighbor_d  * boid_scl * 0.5) && (this.special ==other.special)) {
           sum.add(other.velocity);
           count++;
         }
@@ -460,7 +463,7 @@ class Boid {
       int count = 0;
       for (Boid other : boids) {
         float localDistance = PVector.dist(location, other.location);
-        if ((this.id != other.id) && (localDistance < neighbor_d  * boid_scl * 0.5)) {
+        if ((this.id != other.id) && (localDistance < neighbor_d  * boid_scl * 0.5) && (this.special ==other.special)) {
           sum.add(other.location);
           count++;
         }
