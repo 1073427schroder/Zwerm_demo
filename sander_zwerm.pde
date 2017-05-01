@@ -15,11 +15,13 @@ int numberOfTurns = 0;
 //values for scaling en colors
 float obs_scl = 1.0f;
 float boid_scl = 2.0f;
+float s_boid_scl = 2.0f;
 float ui_scl = 1.0f;
 int background_c = 255; //70
 int obs_c = #D12A2A; //175
 int boid_c = #532AD1; //255
 int eraser_c = #E000FF; //255
+int s_color = #FF4000;
 
 int id_counter = 0;
 

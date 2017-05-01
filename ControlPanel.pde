@@ -154,12 +154,13 @@ class ControlPanel {
       .setColorForeground(color(120))
       .setColorActive(color(255))
       .setColorLabel(color(255))
-      .setItemsPerRow(4)
-      .setSpacingColumn(40)
+      .setItemsPerRow(3)
+      .setSpacingColumn(80)
+      .setSpacingRow(20)
       .addItem("Boids", 0)
       .addItem("Obstacles", 1)
       .addItem("Eraser", 2)
-      .addItem("S_Boids", 3)
+      .addItem("Special Boids", 3)
       ;
 
     //Color Tab
@@ -179,6 +180,11 @@ class ControlPanel {
       .moveTo("color")
       .setLabel("Obstacle Color")
       ;
+      
+     this.cp5.addColorWheel("s_color", width - this.cpWidth + 20, 20 + this.cpWidth*2 - 20, 200 )
+      .moveTo("color")
+      .setLabel("Special Boid Color")
+      ;
 
     //Scaling Tab
     this.cp5.addTab("scaling");
@@ -194,6 +200,13 @@ class ControlPanel {
       .setRange(0.5, 10)
       .setSize(100, 20)
       .setLabel("Obstacle Scale")
+      .moveTo("scaling")
+      ;
+      
+    this.cp5.addSlider("s_boid_scl")
+      .setRange(0.5, 10)
+      .setSize(100, 20)
+      .setLabel("Special Boid Scale")
       .moveTo("scaling")
       ;
 
@@ -266,10 +279,14 @@ class ControlPanel {
       .setPosition(width - this.cpWidth + 20, 20);
 
     this.cp5.getController("background_c")
-      .setPosition(width - this.cpWidth + 20, 20 + this.cpWidth - 40);
+      .setPosition(width - this.cpWidth + 20, 20 + this.cpWidth*0.9 - 40*0.9);
 
     this.cp5.getController("obs_c")
-      .setPosition(width - this.cpWidth + 20, 20 + this.cpWidth*2 - 40*2);
+      .setPosition(width - this.cpWidth + 20, 20 + this.cpWidth*1.8 - 40*1.8);
+      
+      this.cp5.getController("s_color")
+      .setPosition(width - this.cpWidth + 20, 20 + this.cpWidth*2.7 - 40*2.7)
+      ;
 
     //Scaling Tab
     this.cp5.getController("boid_scl")
@@ -277,7 +294,10 @@ class ControlPanel {
 
     this.cp5.getController("obs_scl")
       .setPosition(width - this.cpWidth + 20, 60);
-
+      
+    this.cp5.getController("s_boid_scl")
+      .setPosition(width - this.cpWidth + 20, 100);
+      
     //Scenario Tab
     this.cp5.getController("btnTriangle")
       .setPosition(width - this.cpWidth + 20, 20);
@@ -286,7 +306,7 @@ class ControlPanel {
       .setPosition(width - this.cpWidth + 20, 50);
 
     this.cp5.getController("btnTurnAround")
-      .setPosition(width - this.cpWidth + 20, 380);
+      .setPosition(width - this.cpWidth + 20, 420);
 
     this.cp5.getController("btnOctagon")
       .setPosition(width - this.cpWidth + 20, 80);

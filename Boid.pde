@@ -706,8 +706,8 @@ class Boid {
   //draw the boid
   void render() {
     int tmpColor = boid_c;
-    if (this.special || this.id == 0) {
-      boid_c = #FF4000;
+    if (this.special) {
+      boid_c = s_color;
     }
 
     noStroke();
@@ -732,17 +732,23 @@ class Boid {
     //average the values
     direction.div(this.previousRotation.length);
     theta =  direction.heading() + PI/2 ;
-
     ////end
+    
+    
+    //tmp scaling switching
+    float tmp_scl = boid_scl;
+    if (this.special) tmp_scl = s_boid_scl;
+    
+    
     fill(boid_c);
     //stroke(255);
     pushMatrix();
     translate(this.location.x, this.location.y);
     rotate(theta);
     beginShape(TRIANGLES);
-    vertex(0, -this.radius*2*boid_scl);
-    vertex(-this.radius*boid_scl, this.radius*2*boid_scl);
-    vertex(this.radius*boid_scl, this.radius*2*boid_scl);
+    vertex(0, -this.radius*2*tmp_scl);
+    vertex(-this.radius*tmp_scl, this.radius*2*tmp_scl);
+    vertex(this.radius*tmp_scl, this.radius*2*tmp_scl);
     endShape(CLOSE);
     popMatrix();
     //prev_rotation = theta;
