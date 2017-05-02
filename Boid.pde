@@ -188,10 +188,10 @@ class Boid {
 
 
 
-    if (this.id == 0 && obs.mag() != 0) {
-      println("OBS mag: " + obs.mag());
-      println("SEP mag: " + sep.mag());
-    }
+    //if (this.id == 0 && obs.mag() != 0) {
+    //  println("OBS mag: " + obs.mag());
+    //  println("SEP mag: " + sep.mag());
+    //}
 
 
     if (turnAroundAnimationCounter > 0) obs.mult(-1);
