@@ -53,19 +53,21 @@ class Boid {
 
   //do all the things required to run
   void run(ArrayList<Boid> boids) {
-    resetObstacles();
-    if (disableTurnAround) this.turnAroundAnimationCounter = 0;
-    if (!currentlyTurningAround()) {
-      calculateForces(boids);
-      //override flock movement
-      avoidCornerCollisions();
-    } else {
-      animateTurningAround();
-    }
-    //if close by, fly slower
-    //closeBySlowness();
-    //bumper
-    //bumper();
+    calculateForces(boids);
+    
+    //resetObstacles();
+    //if (disableTurnAround) this.turnAroundAnimationCounter = 0;
+    //if (!currentlyTurningAround()) {
+    //  calculateForces(boids);
+    //  //override flock movement
+    //  avoidCornerCollisions();
+    //} else {
+    //  animateTurningAround();
+    //}
+    ////if close by, fly slower
+    ////closeBySlowness();
+    ////bumper
+    ////bumper();
     update();
     borders();
     render();
@@ -477,134 +479,134 @@ class Boid {
     } else return new PVector(0, 0);
   }
 
-  //************************************************************************************************//
-  // obstacle avoidance way
-  // Test for corner bunching prevention
-  PVector avoidObstacle() {
-    float lookingDistance = 10*obs_scl+10;
-    PVector sum = new PVector(0, 0);
-    PVector biggerVelocity = new PVector(0, 0);
-    biggerVelocity.set(this.velocity);
-    biggerVelocity.mult(30);
-    PVector futureLocation = new PVector(0, 0);
-    futureLocation.set(PVector.add(location, biggerVelocity));
-    int count = 0;
-    this.numberOfNearbyObstacles = 0;
-    //obstacles.checkDistance
-    for (Obstacle o : obstacles.obstacles) {
-      obstacleVector.set(0, 0);
-      float localDistance = o.calcDistPointToLine(o.startPosition, o.endPosition, futureLocation, obstacleVector);
-      localDistance = sqrt(localDistance);
-      if (localDistance < lookingDistance) {
-        futureLocation.add(biggerVelocity.mult(20));
-        if (o.startPosition.dist(futureLocation) > o.endPosition.dist(futureLocation)) obstacleVector.set(o.startPosition);
-        else obstacleVector.set(o.endPosition);
-        PVector difference = PVector.sub(this.location, obstacleVector);
-        difference.normalize();
-        difference.div(localDistance);        // Weight by distance
-        sum.set(difference);
-        //dist_smallest = dist;
-        //sum.add(diff);
-        count++;            // Keep track of how many
-        this.numberOfNearbyObstacles++;
+//  //************************************************************************************************//
+//  // obstacle avoidance way
+//  // Test for corner bunching prevention
+//  PVector avoidObstacle() {
+//    float lookingDistance = 10*obs_scl+10;
+//    PVector sum = new PVector(0, 0);
+//    PVector biggerVelocity = new PVector(0, 0);
+//    biggerVelocity.set(this.velocity);
+//    biggerVelocity.mult(30);
+//    PVector futureLocation = new PVector(0, 0);
+//    futureLocation.set(PVector.add(location, biggerVelocity));
+//    int count = 0;
+//    this.numberOfNearbyObstacles = 0;
+//    //obstacles.checkDistance
+//    for (Obstacle o : obstacles.obstacles) {
+//      obstacleVector.set(0, 0);
+//      float localDistance = o.calcDistPointToLine(o.startPosition, o.endPosition, futureLocation, obstacleVector);
+//      localDistance = sqrt(localDistance);
+//      if (localDistance < lookingDistance) {
+//        futureLocation.add(biggerVelocity.mult(20));
+//        if (o.startPosition.dist(futureLocation) > o.endPosition.dist(futureLocation)) obstacleVector.set(o.startPosition);
+//        else obstacleVector.set(o.endPosition);
+//        PVector difference = PVector.sub(this.location, obstacleVector);
+//        difference.normalize();
+//        difference.div(localDistance);        // Weight by distance
+//        sum.set(difference);
+//        //dist_smallest = dist;
+//        //sum.add(diff);
+//        count++;            // Keep track of how many
+//        this.numberOfNearbyObstacles++;
+//      }
+//    }
+//    //cut corners prevention
+//    //overide when current loc is to close
+//    for (Obstacle o : obstacles.obstacles) {
+//      obstacleVector.set(0, 0);
+//      float localDistance = o.calcDistPointToLine(o.startPosition, o.endPosition, this.location, obstacleVector);
+//      localDistance = sqrt(localDistance);
+//      if (localDistance < lookingDistance) {
+//        PVector difference = PVector.sub(this.location, obstacleVector);
+//        difference.normalize();
+//        sum.set(difference);
+//        //count = 1;
+//      }
+//    }
+
+//    if (count > 1) {
+//      sum.div(count);
+//      //sum.mult(-1);
+//    }
+//    if (sum.mag() > 0) {
+//      sum.setMag(this.maxspeed);
+//      PVector steer = PVector.sub(sum, this.velocity);
+//      //PVector steer = PVector.sub(velocity, sum);
+//      steer.limit(this.maxforce);
+//      //steer.rotate(steer.heading() + PI/2);
+//      //velocity.heading() + PI/2
+//      //println(steer.heading());
+//      //steer.limit(maxforce * 1.5);
+//      //applyForce(steer);
+//      return steer;
+//    } else     return(new PVector(0, 0));
+//  }
+
+
+    //************************************************************************************************//
+    // obstacle avoidance way
+    // Force field way to be converted to obstacle avoidance
+    // take two, keep heading of group / individual
+    // or just future predicting
+    // future predicting
+    PVector avoidObstacle() {
+      float lookingDistance = 10*obs_scl+10;
+      PVector sum = new PVector(0, 0);
+      PVector biggerVelocity = new PVector(0, 0);
+      biggerVelocity.set(this.velocity);
+      biggerVelocity.mult(30);
+      PVector futureLocation = new PVector(0, 0);
+      futureLocation.set(PVector.add(location, biggerVelocity));
+      int count = 0;
+      //obstacles.checkDistance
+      for (Obstacle o : obstacles.obstacles) {
+        obstacleVector.set(0, 0);
+        float localDistance = o.calcDistPointToLine(o.startPosition, o.endPosition, futureLocation, obstacleVector);
+        localDistance = sqrt(localDistance);
+        if (localDistance < lookingDistance) {
+          futureLocation.add(biggerVelocity.mult(20));
+          if (o.startPosition.dist(futureLocation) > o.endPosition.dist(futureLocation)) obstacleVector.set(o.startPosition);
+          else obstacleVector.set(o.endPosition);
+          PVector difference = PVector.sub(this.location, obstacleVector);
+          difference.normalize();
+          difference.div(localDistance);        // Weight by distance
+          sum.set(difference);
+          //dist_smallest = dist;
+          //sum.add(diff);
+          //count++;            // Keep track of how many
+        }
       }
-    }
-    //cut corners prevention
-    //overide when current loc is to close
-    for (Obstacle o : obstacles.obstacles) {
-      obstacleVector.set(0, 0);
-      float localDistance = o.calcDistPointToLine(o.startPosition, o.endPosition, this.location, obstacleVector);
-      localDistance = sqrt(localDistance);
-      if (localDistance < lookingDistance) {
-        PVector difference = PVector.sub(this.location, obstacleVector);
-        difference.normalize();
-        sum.set(difference);
-        //count = 1;
+      //cut corners prevention
+      //overide when current loc is to close
+      for (Obstacle o : obstacles.obstacles) {
+        obstacleVector.set(0, 0);
+        float localDistance = o.calcDistPointToLine(o.startPosition, o.endPosition, this.location, obstacleVector);
+        localDistance = sqrt(localDistance);
+        if (localDistance < lookingDistance) {
+          PVector difference = PVector.sub(this.location, obstacleVector);
+          difference.normalize();
+          sum.set(difference);
+          count = 1;
+        }
       }
+
+      if (count > 0) {
+        sum.div(count);
+      }
+      if (sum.mag() > 0) {
+        sum.setMag(this.maxspeed);
+        PVector steer = PVector.sub(sum, this.velocity);
+        //PVector steer = PVector.sub(velocity, sum);
+        steer.limit(this.maxforce);
+        //steer.rotate(steer.heading() + PI/2);
+        //velocity.heading() + PI/2
+        //println(steer.heading());
+        //steer.limit(maxforce * 1.5);
+        //applyForce(steer);
+        return steer;
+      } else     return(new PVector(0, 0));
     }
-
-    if (count > 1) {
-      sum.div(count);
-      //sum.mult(-1);
-    }
-    if (sum.mag() > 0) {
-      sum.setMag(this.maxspeed);
-      PVector steer = PVector.sub(sum, this.velocity);
-      //PVector steer = PVector.sub(velocity, sum);
-      steer.limit(this.maxforce);
-      //steer.rotate(steer.heading() + PI/2);
-      //velocity.heading() + PI/2
-      //println(steer.heading());
-      //steer.limit(maxforce * 1.5);
-      //applyForce(steer);
-      return steer;
-    } else     return(new PVector(0, 0));
-  }
-
-
-  //  //************************************************************************************************//
-  //  // obstacle avoidance way
-  //  // Force field way to be converted to obstacle avoidance
-  //  // take two, keep heading of group / individual
-  //  // or just future predicting
-  //  // future predicting
-  //  PVector avoidObstacle() {
-  //    float lookingDistance = 10*obs_scl+10;
-  //    PVector sum = new PVector(0, 0);
-  //    PVector biggerVelocity = new PVector(0, 0);
-  //    biggerVelocity.set(this.velocity);
-  //    biggerVelocity.mult(30);
-  //    PVector futureLocation = new PVector(0, 0);
-  //    futureLocation.set(PVector.add(location, biggerVelocity));
-  //    int count = 0;
-  //    //obstacles.checkDistance
-  //    for (Obstacle o : obstacles.obstacles) {
-  //      obstacleVector.set(0, 0);
-  //      float localDistance = o.calcDistPointToLine(o.startPosition, o.endPosition, futureLocation, obstacleVector);
-  //      localDistance = sqrt(localDistance);
-  //      if (localDistance < lookingDistance) {
-  //        futureLocation.add(biggerVelocity.mult(20));
-  //        if (o.startPosition.dist(futureLocation) > o.endPosition.dist(futureLocation)) obstacleVector.set(o.startPosition);
-  //        else obstacleVector.set(o.endPosition);
-  //        PVector difference = PVector.sub(this.location, obstacleVector);
-  //        difference.normalize();
-  //        difference.div(localDistance);        // Weight by distance
-  //        sum.set(difference);
-  //        //dist_smallest = dist;
-  //        //sum.add(diff);
-  //        //count++;            // Keep track of how many
-  //      }
-  //    }
-  //    //cut corners prevention
-  //    //overide when current loc is to close
-  //    for (Obstacle o : obstacles.obstacles) {
-  //      obstacleVector.set(0, 0);
-  //      float localDistance = o.calcDistPointToLine(o.startPosition, o.endPosition, this.location, obstacleVector);
-  //      localDistance = sqrt(localDistance);
-  //      if (localDistance < lookingDistance) {
-  //        PVector difference = PVector.sub(this.location, obstacleVector);
-  //        difference.normalize();
-  //        sum.set(difference);
-  //        count = 1;
-  //      }
-  //    }
-
-  //    if (count > 0) {
-  //      sum.div(count);
-  //    }
-  //    if (sum.mag() > 0) {
-  //      sum.setMag(this.maxspeed);
-  //      PVector steer = PVector.sub(sum, this.velocity);
-  //      //PVector steer = PVector.sub(velocity, sum);
-  //      steer.limit(this.maxforce);
-  //      //steer.rotate(steer.heading() + PI/2);
-  //      //velocity.heading() + PI/2
-  //      //println(steer.heading());
-  //      //steer.limit(maxforce * 1.5);
-  //      //applyForce(steer);
-  //      return steer;
-  //    } else     return(new PVector(0, 0));
-  //  }
 
   //************************************************************************************************//
 

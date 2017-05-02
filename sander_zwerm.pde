@@ -1,8 +1,6 @@
 //Zwerm demo
 //Start of code based of Daniel Shiffman's Nature of Code Chapter 6
 
-//before the obstacle turn reversal
-
 //Modes
 enum Mode {
   BOIDS, ADD_OBS, ERASE_OBS, SPECIAL_BOIDS
